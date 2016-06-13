@@ -1,0 +1,339 @@
+/**
+ * This file should get overwritten if Method 1 is used. If Method 2 is chosen,
+ * remove this comment and start adding your styles to this file.
+ */
+
+body {
+	font-size: 12px;
+}
+
+h1.page-header {
+/*	font-size: 20px;*/
+}
+
+h2 {
+	font-size: 16px;
+	margin-top: 0px;
+	margin-bottom; 10px;
+}
+
+p {
+	line-height: 1.7;
+}
+
+.dcapp_center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.dcapp_right {
+	position:relative;
+	float:right;
+}
+
+.text_center {
+	text-align: center;
+}
+
+.node-sticky {
+	border: 0px solid #F5F3E2;
+	padding-left: 5px;
+	margin-top: 10px;
+}
+
+.node-teaser {
+}
+
+.navbar-header {
+	padding-top: 2px;
+}
+
+.navbar-default .navbar-brand {
+	font-weight: bold;
+	color: #000000;
+}
+
+.contextual-links-region
+{
+	padding-bottom: 10px;
+}
+
+
+div.field {
+	padding-bottom: 10px;
+	padding-right: 10px;
+}
+
+div.region.region-content>div.field.field-name-body {
+	min-height: 60px;
+}
+
+.content .menu-block-wrapper .nav>li>a {
+	padding: 5px 15px;
+}
+
+.content .nav>li>a {
+	padding: 5px 15px;
+}
+
+.content ul.li.leaf {
+	padding: 5px 15px;
+}
+
+.views-row div.field.field-name-field-topic-image {
+	float: left;
+}
+
+.field-items div.field.field-name-field-topic-image {
+        float: left;
+}
+
+.views-row div.field.field-name-field-event-image {
+        float: left;
+}
+
+.views-row div.field.field-name-field-coupon-image {
+        float: left;
+}
+
+.views-row div.field.field-name-field-deal-image-1 {
+        float: left;
+}
+
+.views-row div.field.field-name-field-business-logo {
+        float: left;
+}
+
+.views-row div.field.field-name-field-dcapp-article-image {
+        float: left;
+}
+
+.views-row div.field.field-name-field-business-logo {
+}
+
+
+.views-row div.field.field-name-field-announcement-image {
+        float: left;
+}
+
+.views-row div.field.field-name-field-question-icon,div.field.field-name-field-answer-image {
+        float: left;
+}
+
+
+
+div.content div.field.field-name-field-business-logo {
+        float: left;
+}
+
+div.field.field-name-field-featured-photo {
+	float: left;
+}
+
+.views-row div.field.field-name-field-job-image {
+	float: left;
+}
+
+div.field.field-name-title {
+        padding-bottom:0px;
+}
+
+span.stMainServices.st-twitter-counter {
+	height: 22px;
+}
+
+div.field.field-name-field-rental-rent
+        padding-bottom:0px;
+}
+
+div.field.field-name-post-date
+        padding-bottom:0px;
+}
+
+
+
+.rate-info {
+	display: inline;
+}
+
+.addbutton {
+        margin: 0 0px 20px 0px;
+        padding: 6px 8px;
+        background: #3b3b3b;
+        color: #fff;
+        text-decoration:none;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+}
+
+.addbutton a {
+        text-decoration:none;
+}
+
+.addbuttonp {
+        text-align: right;
+}
+
+li.comment-add {
+	display: none;
+}
+
+  
+div.group-right .field-name-field-business-logo {
+	float: right;
+	padding-bottom: 100px;
+}
+
+img {
+          display: block;
+          height: auto;
+          max-width: 100%;
+   }
+
+div.comment > h3 > a {
+	display:none;
+}
+
+section.block-menu-block, section.block-block {
+	border: 1px solid lightgrey;
+	padding: 10px 10px 10px 10px;
+	margin-bottom: 10px;
+	
+}
+
+fieldset.filter-wrapper {
+	display: none;
+}
+
+/* Account registration
+ *
+ */
+.password-sugestions {
+	display:none;
+}
+
+.password-strength {
+	display:none;
+}
+
+.password-suggestions {
+	display:none;
+}
+
+
+/* User Profile
+ *
+ */
+
+.user_badges img {
+	background-color: white;
+	display: inline !important;
+}
+
+img.badge {
+	background-color: #FFFFFF;
+	display: inline !important;
+}
+
+/* Busines 
+ */
+
+.group-footer div.field-item.even, .group-footer div.field-item.odd {
+	padding-right: 10px;
+	display: inline;
+}
+
+div.field-item.even img, div.field-item.odd img {
+	display: inline;
+}
+div.content div.field.field-name-field-business-rating {
+	float:left;
+	padding-right:20px;
+}
+
+/* DCApp Topic
+ */
+
+div.field-name-field-additional-photos .field-items .field-item.even, div.field-name-field-additional-photos .field-items .field-item.odd {
+        display: inline;
+	padding-right: 10px;
+}
+
+/* Announcement
+ */
+
+/* Q&A / Answers
+ */
+ul.tabs--primary.nav.nav-tabs {
+	/*display:none;*/
+}
+
+ul.links.list-inline {
+	padding-top: 20px;
+}
+div.view-empty
+{
+}
+
+/* Questions */
+
+.answer_field_answer_question a {
+	margin: 0 20px 20px 0px;
+	padding: 6px 8px;
+	background: #3b3b3b;
+	color: #fff;
+	text-decoration: none;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+span.stMainServices.st-twitter-counter,span.stMainServices.st-facebook-counter {
+	height: 22px;
+}
+
+/*
+ * Rental
+ *
+ */
+
+.node-teaser {
+  border-bottom: 1px solid #d3d7d9;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+}
+
+/*
+ * Reviews
+ *
+ */
+
+.view-business-review-comments img {
+	display:inherit;
+}
+
+.view-business-review-comments .node-teaser {
+        border-bottom:1px solid #d3d7d9;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
+
+
+/*
+ * Side blocks
+ */
+div.simplead-container {
+border-style: solid;
+border-width: 1px;
+border-color: gainsboro;
+padding: 10px;
+}
+
+/* Search
+ *   */
+div.form-type-checkbox.form-item-retain-filters.form-item.checkbox {
+        display: none;
+}
+

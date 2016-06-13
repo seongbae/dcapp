@@ -1,0 +1,437 @@
+<?php
+
+/**
+ * @file dcapp.module
+ * TODO: Enter file description here.
+ */
+
+require_once(drupal_get_path('theme', 'bootstrap') . '/includes/process.inc');
+
+/**
+ * Implements hook_form_alter().
+ */
+function dcapp_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form['type']) && $form['type']['#value'] . '_node_settings' == $form_id) {
+    $form['workflow']['upload_' . $form['type']['#value']] = array(
+      '#type' => 'radios',
+      '#title' => t('Attachments'),
+      '#default_value' => variable_get('upload_' . $form['type']['#value'], 1),
+      '#options' => array(t('Disabled'), t('Enabled')),
+    );
+  }
+
+ if ($form_id == 'views_exposed_form' && $form_state['view']->name == 'rental') {
+
+    // Change field_test_value_op to the identifier you specified
+	unset($form['field_rental_rent_amount_op']['#options']['=']);
+	unset($form['field_rental_rent_amount_op']['#options']['<=']);
+	unset($form['field_rental_rent_amount_op']['#options']['!=']);
+	unset($form['field_rental_rent_amount_op']['#options']['>=']);
+	unset($form['field_rental_rent_amount_op']['#options']['between']);
+	unset($form['field_rental_rent_amount_op']['#options']['not between']);
+
+	$form['field_rental_rent_amount_op']['#options']['<'] = "less than (<)";
+	 $form['field_rental_rent_amount_op']['#options']['>'] = "greater than (>)";
+}
+
+  if ($form_id == 'user_register_form') {
+    if (arg(0) == 'my_services_endpoint_path') {
+      unset($form['captcha']);
+    }
+  }
+
+}
+
+function dcapp_form_user_register_form_alter(&$form, $form_state, $form_id) {
+
+  if (!($form_id == 'user_register_form')) {
+        return;
+  }
+
+  $form['account']['name']['#description'] = '';
+  $form['account']['name']['#maxlength'] = 12;
+
+  $form['account']['mail']['#description'] = '';
+
+  //$form['captcha_response']['#description'] = '';
+}
+
+function dcapp_page_alter(&$page) {
+  /*
+  $view = views_get_page_view();
+  if (empty($view)) return;
+ //die($view->get_path());
+  if ($view->get_path() !== 'taxonomy/term/%') return; 
+  if (!($view->display_handler->has_path())) return;
+  if (!($view->display_handler->uses_breadcrumb())) return;
+  $context = array();
+  $context['entity_type'] = 'taxonomy_term';
+  $context['entity'] = taxonomy_term_load($view->args[0]);
+  $context['view_mode'] = 'full';
+  metatag_field_attach_view_alter($page['content'], $context); 
+  */
+}
+
+function dcapp_services_resources() {
+  $api = array(
+    'dcapp_business' => array(
+      'operations' => array(
+        'index' => array(
+          'help' => 'Retrieves businesses',
+          'callback' => '_dcapp_business_index',
+          'access callback' => 'user_access',
+          'access arguments' => array('access content'),
+          'access arguments append' => FALSE,
+          'args' => array(
+            array(
+              'name' => 'fn',
+              'type' => 'string',
+              'description' => 'Function to perform',
+              'source' => array('path' => '0'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            array(
+              'name' => 'listtype',
+              'type' => 'string',
+              'description' => 'Listing style - short vs full',
+              'source' => array('param' => 'listtype'),
+              'optional' => TRUE,
+              'default' => 'short',
+            ),
+            array(
+              'name' => 'limit',
+              'type' => 'int',
+              'description' => 'Number of items to get',
+              'source' => array('param' => 'limit'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            array(
+              'name' => 'since',
+              'type' => 'int',
+              'description' => 'Posts from the last number of days',
+              'source' => array('param' => 'since'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            array(
+              'name' => 'tid',
+              'type' => 'int',
+              'description' => 'Category term id',
+              'source' => array('param' => 'tid'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            array(
+              'name' => 'offset',
+              'type' => 'int',
+              'description' => 'Offset value',
+              'source' => array('param' => 'offset'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            
+          ),
+        ),
+        'retrieve' => array(
+          'help' => 'Retrieves a business',
+          'callback' => '_dcapp_business_retrieve',
+          'access callback' => 'user_access',
+          'access arguments' => array('access content'),
+          'access arguments append' => FALSE,
+          'args' => array(
+            array(
+              'name' => 'fn',
+              'type' => 'string',
+              'description' => 'Function to perform',
+              'source' => array('path' => '0'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            array(
+              'name' => 'nid',
+              'type' => 'int',
+              'description' => 'Node ID',
+              'source' => array('param' => 'nid'),
+              'optional' => FALSE,
+              'default' => '0',
+            ),
+          ),
+        ),
+      ),
+    ),
+    'dcapp_taxonomy' => array(
+      'operations' => array(
+        'index' => array(
+          'help' => 'Retrieves vocabulary and associated terms',
+          'callback' => '_dcapp_taxonomy_index',
+          'access callback' => 'user_access',
+          'access arguments' => array('access content'),
+          'access arguments append' => FALSE,
+          'args' => array(
+            array(
+              'name' => 'fn',
+              'type' => 'string',
+              'description' => 'Function to perform',
+              'source' => array('path' => '0'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            array(
+              'name' => 'vid',
+              'type' => 'int',
+              'description' => 'Vocabulary ID',
+              'source' => array('param' => 'vid'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+          ),
+        ),
+      ),
+    ),
+    'dcapp_comment' => array(
+      'operations' => array(
+        'index' => array(
+          'help' => 'Retrieves comments / reviews associated with node',
+          'callback' => '_dcapp_comment_index',
+          'access callback' => 'user_access',
+          'access arguments' => array('access content'),
+          'access arguments append' => FALSE,
+          'args' => array(
+            array(
+              'name' => 'fn',
+              'type' => 'string',
+              'description' => 'Function to perform',
+              'source' => array('path' => '0'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            array(
+              'name' => 'nid',
+              'type' => 'int',
+              'description' => 'Node ID',
+              'source' => array('param' => 'nid'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  return $api;
+}
+
+function _dcapp_business_index($fn, $listtype, $limit, $timestamp, $tid, $offset) {
+  // Check for mad values
+  $nitems = intval($nitems);
+  $timestamp = intval($timestamp);
+  $tid = intval($tid);
+
+  return dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset);
+}
+
+function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset) {
+  // Compose query
+  $query = db_select('node', 'n');
+  //$query->join('node_revision', 'v', '(n.nid = v.nid) AND (n.vid = v.vid)');
+  $query->join('users', 'u', 'n.uid = u.uid');
+  $query->leftJoin('field_data_body', 'b', '((b.entity_type = \'node\') AND (b.entity_id = n.nid) AND (b.revision_id = n.vid))');
+  $query->join('field_data_field_business_geofield','g','n.nid = g.entity_id');
+  $query->join('field_data_field_category','c','n.nid = c.entity_id');
+  $query->join('taxonomy_term_data','t','c.field_category_tid = t.tid');
+  $query->leftJoin('comment','d','d.nid = n.nid');
+  $query->leftJoin('field_data_field_business_rating','r','n.nid = r.entity_id');
+  $query->leftJoin('field_data_field_open_positions','op','n.nid = op.entity_id');
+
+  $query->addField('n', 'created', 'created');
+  $query->addField('n', 'changed', 'changed');
+  $query->addField('n', 'title', 'name');
+  $query->addField('n', 'nid', 'nid');
+  $query->addField('n', 'sticky', 'sticky');
+  $query->addField('u', 'name', 'author');
+  $query->addField('t', 'tid', 'tid');
+  $query->addField('t', 'name', 'term_name');
+  $query->addExpression('COUNT(d.cid)', 'userratingcount');
+  $query->addExpression('COUNT(r.entity_id)', 'bizratingcount');
+  $query->addExpression('COUNT(op.entity_id)', 'openpositions');
+  $query->groupBy('n.nid');
+  $query->addField('r', 'field_business_rating_rating', 'rating');
+  $query->addField('g','field_business_geofield_lat','latitude');
+  $query->addField('g','field_business_geofield_lon','longitude');
+  
+  if($listtype=='long') {
+    $query->addField('b', 'body_value', 'body');
+  }
+
+  $query->condition('n.type', 'business', '=');
+  $query->condition('n.status', NODE_PUBLISHED, '=');
+
+  // filter by term id
+  if ($tid > 0) {
+    $query->condition('c.field_category_tid', $tid, '=');
+  }
+
+  //$query->orderBy('v.timestamp', 'DESC');
+  // Limited by items?
+  if ($limit) {
+    $query->range($offset, $limit);
+  }
+
+  //print_r($query->__toString());
+
+  $items = $query->execute()->fetchAll();
+
+  return $items;
+}
+
+function _dcapp_business_retrieve($fn, $nid) {
+  // Check for mad values
+
+  $query = db_select('node', 'n');
+  $query->join('node_revision', 'v', '(n.nid = v.nid) AND (n.vid = v.vid)');
+  $query->join('users', 'u', 'n.uid = u.uid');
+  $query->leftJoin('field_data_body', 'b', '((b.entity_type = \'node\') AND (b.entity_id = n.nid) AND (b.revision_id = n.vid))');
+  $query->join('field_data_field_business_geofield','g','n.nid = g.entity_id');
+  $query->join('field_data_field_category','c','n.nid = c.entity_id');
+  $query->join('taxonomy_term_data','t','c.field_category_tid = t.tid');
+  $query->join('field_data_field_phone','p','p.entity_id = n.nid');
+  $query->leftJoin('comment','d','d.nid = n.nid');
+  $query->leftJoin('field_data_field_business_rating','r','n.nid = r.entity_id');
+  $query->leftJoin('field_data_field_website','w','n.nid = w.entity_id');
+  $query->leftJoin('field_data_field_business_en_name','en','n.nid = en.entity_id');
+  $query->leftJoin('field_data_field_business_address2','ad','n.nid = ad.entity_id');
+  $query->leftJoin('field_data_field_business_email2','em','n.nid = em.entity_id');
+ 
+  $query->addField('n', 'created', 'created');
+  $query->addField('n', 'changed', 'changed');
+  $query->addField('v', 'title', 'name');
+  $query->addField('en', 'field_business_en_name_value', 'name_en');
+  $query->addField('n', 'nid', 'nid');
+  $query->addField('n', 'sticky', 'sticky');
+  $query->addField('u', 'name', 'author');
+  $query->addField('t', 'tid', 'tid');
+  $query->addField('t', 'name', 'term_name');
+  $query->addField('p', 'field_phone_value', 'phone');
+  $query->addField('em', 'field_business_email2_email', 'email');
+  $query->addField('w', 'field_website_url', 'website');
+  $query->addField('ad', 'field_business_address2_thoroughfare', 'street');
+  $query->addField('ad', 'field_business_address2_premise', 'street2');
+  $query->addField('ad', 'field_business_address2_locality', 'city');
+  $query->addField('ad', 'field_business_address2_administrative_area', 'state');
+  $query->addField('ad', 'field_business_address2_postal_code', 'zip');
+  $query->addExpression('COUNT(d.cid)', 'userratingcount');
+  $query->addExpression('COUNT(r.entity_id)', 'bizratingcount');
+  $query->addField('g','field_business_geofield_lat','latitude');
+  $query->addField('g','field_business_geofield_lon','longitude');
+  $query->addField('b', 'body_summary', 'summary');
+  $query->addField('b', 'body_value', 'body');
+  //$query->addField('b', 'rating_value', 'ratingvalue');
+  
+
+  $query->groupBy('n.nid');
+  //$query->addField('r', 'field_business_rating_rating', 'rating');
+  //echo($listtype);
+
+  
+  $query->condition('n.type', 'business', '=');
+  $query->condition('n.status', NODE_PUBLISHED, '=');
+
+  if ($nid > 0) {
+    $query->condition('n.nid', $nid, '=');
+  }
+
+  //print_r($query->__toString());
+	//exit;
+
+ // die();
+
+  $items = $query->execute()->fetchAll();
+
+  return $items;
+}
+
+function _dcapp_taxonomy_index($fn, $vid) {
+  // Check for mad values
+  $tid = intval($vid);
+
+  return dcapp_find_taxonomy($vid);
+}
+
+function dcapp_find_taxonomy($vid) {
+  // Compose query
+  $query = db_select('taxonomy_vocabulary', 'v');
+  
+  $query->addField('v', 'vid', 'vid');
+  $query->addField('v', 'name', 'vname');
+  $query->addField('t', 'tid', 'tid');
+  $query->addField('t', 'name', 'name');
+  $query->addField('t', 'description', 'description');
+  $query->addField('t', 'weight', 'weight');
+  $query->addField('h', 'parent', 'parent_tid');
+  $query->addField('f1', 'uri', 'image_uri');
+  $query->addField('f2', 'uri', 'image2x_uri');
+  $query->addField('f3', 'uri', 'image3x_uri');
+  
+  $query->join('taxonomy_term_data','t','v.vid=t.vid');
+  $query->leftJoin('taxonomy_term_hierarchy','h','t.tid=h.tid');
+  $query->leftJoin('field_data_field_business_term_image','i1','i1.entity_id=t.tid');
+  $query->leftJoin('field_data_field_business_term_image2x','i2','i2.entity_id=t.tid');
+  $query->leftJoin('field_data_field_business_term_image3x','i3','i3.entity_id=t.tid');
+  $query->leftJoin('file_managed','f1','f1.fid=i1.field_business_term_image_fid');
+  $query->leftJoin('file_managed','f2','f2.fid=i2.field_business_term_image2x_fid');
+  $query->leftJoin('file_managed','f3','f3.fid=i3.field_business_term_image3x_fid');
+
+  // filter by term id
+  if ($vid > 0) {
+    $query->condition('v.vid', $vid, '=');
+  }
+
+  $query->orderBy('v.weight', 'DESC');
+  
+  $items = $query->execute()->fetchAll();
+
+  return $items;
+}
+
+function _dcapp_comment_index($fn, $nid) {
+  // Check for mad values
+  $nid = intval($nid);
+
+  return dcapp_find_comments($nid);
+}
+
+function dcapp_find_comments($nid) {
+  // Compose query
+  $query = db_select('comment', 'c');
+  
+  $query->addField('c', 'cid', 'cid');
+  $query->addField('c', 'pid', 'pid');
+  $query->addField('c', 'uid', 'uid');
+  $query->addField('c', 'name', 'name');
+  $query->addField('c', 'subject', 'subject');
+  $query->addField('b', 'comment_body_value', 'body');
+  $query->addField('b', 'comment_body_format', 'body_format');
+  $query->addField('c', 'created', 'created');
+  $query->addField('c', 'changed', 'changed');
+  
+  $query->join('field_data_comment_body','b','b.entity_id=c.cid');
+
+  // filter by node id
+  if ($nid > 0) {
+    $query->condition('c.nid', $nid, '=');
+  }
+
+  $query->condition('c.status', NODE_PUBLISHED, '=');
+
+  $query->orderBy('c.created', 'DESC');
+  
+  $items = $query->execute()->fetchAll();
+
+  return $items;
+}
+
+
+?>
