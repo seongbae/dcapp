@@ -695,6 +695,13 @@ body.toolbar-drawer {
 
 .cm-panel-separator-top {
 	border-top: 1px solid #d3d7d9;
+	margin-top: 50px;
+	padding-top: 50px;
+}
+
+.cm-panel-separator-bottom {
+	border-bottom: 1px solid #d3d7d9;
+	pading-bottom: 50px;
 }
 
 .cm-panel-separator {
@@ -702,17 +709,17 @@ body.toolbar-drawer {
 	margin-bottom: 50px;
 }
 
+.cm-section-title {
+	margin-bottom: 50px;
+}
+
 .cm-testimonial {
-	border-top: 1px solid #d3d7d9;
-	border-bottom: 1px solid #d3d7d9;
-	padding-top: 50px;
 	padding-bottom: 50px;
 	margin-bottom: 30px;
 }
 
 .cm-testimonial-quote-pic {
 	float: left;
-	padding-left:100px;
 }
 
 .cm-testimonial-quote {
