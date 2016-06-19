@@ -688,6 +688,11 @@ body.toolbar-drawer {
     text-align: center;
 }
 
+.single-feature .pane-title {
+	font-size: 20px;
+	margin-bottom: 20px;
+}
+
 .cm-form {
 	width: 60%;
 	margin: auto;
@@ -711,6 +716,14 @@ body.toolbar-drawer {
 
 .cm-section-title {
 	margin-bottom: 50px;
+}
+
+.cm-benefit-title {
+	margin-bottom: 40px;
+}
+
+.cm-benefit-text {
+	margin-top: 40px;
 }
 
 .cm-testimonial {
