@@ -131,6 +131,22 @@ function dcapp_services_resources() {
               'optional' => TRUE,
               'default' => '0',
             ),
+            array(
+              'name' => 'lon',
+              'type' => 'string',
+              'description' => 'Longitude',
+              'source' => array('param' => 'lon'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
+            array(
+              'name' => 'lat',
+              'type' => 'string',
+              'description' => 'Latitude',
+              'source' => array('param' => 'lat'),
+              'optional' => TRUE,
+              'default' => '0',
+            ),
             
           ),
         ),
@@ -224,16 +240,18 @@ function dcapp_services_resources() {
   return $api;
 }
 
-function _dcapp_business_index($fn, $listtype, $limit, $timestamp, $tid, $offset) {
+function _dcapp_business_index($fn, $listtype, $limit, $timestamp, $tid, $offset, $lon, $lat) {
   // Check for mad values
   $nitems = intval($nitems);
   $timestamp = intval($timestamp);
   $tid = intval($tid);
+  $lon = doubleval($lon);
+  $lat = doubleval($lat);
 
-  return dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset);
+  return dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset, $lon, $lat);
 }
 
-function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset) {
+function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset, $lon, $lat) {
   // Compose query
   $query = db_select('node', 'n');
   //$query->join('node_revision', 'v', '(n.nid = v.nid) AND (n.vid = v.vid)');
@@ -274,10 +292,23 @@ function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset)
     $query->condition('c.field_category_tid', $tid, '=');
   }
 
-  //$query->orderBy('v.timestamp', 'DESC');
   // Limited by items?
   if ($limit) {
     $query->range($offset, $limit);
+  }
+
+  // sort by distance
+  if ($lat != 0 && $lon != 0) {
+      $query->addExpression($lat, 'userlat');
+      $query->addExpression($lon, 'userlon');
+      $query->addExpression('69.0 *
+        DEGREES(ACOS(COS(RADIANS(g.field_business_geofield_lat))
+         * COS(RADIANS(' . $lat . '))
+         * COS(RADIANS(g.field_business_geofield_lon - ' . $lon . '))
+         + SIN(RADIANS(g.field_business_geofield_lat))
+         * SIN(RADIANS(' . $lat . '))))','distance');
+
+      $query->orderBy('distance', 'ASC');
   }
 
   //print_r($query->__toString());
@@ -285,6 +316,23 @@ function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset)
   $items = $query->execute()->fetchAll();
 
   return $items;
+}
+
+ function distanceCalculation($degrees, $unit = 'km', $decimals = 2) {
+  // Calculate the distance in degrees
+  
+  // Convert the distance in degrees to the chosen unit (kilometres, miles or nautical miles)
+  switch($unit) {
+    case 'km':
+      $distance = $degrees * 111.13384; // 1 degree = 111.13384 km, based on the average diameter of the Earth (12,735 km)
+      break;
+    case 'mi':
+      $distance = $degrees * 69.05482; // 1 degree = 69.05482 miles, based on the average diameter of the Earth (7,913.1 miles)
+      break;
+    case 'nmi':
+      $distance =  $degrees * 59.97662; // 1 degree = 59.97662 nautic miles, based on the average diameter of the Earth (6,876.3 nautical miles)
+  }
+  return round($distance, $decimals);
 }
 
 function _dcapp_business_retrieve($fn, $nid) {
@@ -344,11 +392,7 @@ function _dcapp_business_retrieve($fn, $nid) {
   }
 
   //print_r($query->__toString());
-	//exit;
-
- // die();
-
-  $items = $query->execute()->fetchAll();
+	$items = $query->execute()->fetchAll();
 
   return $items;
 }
