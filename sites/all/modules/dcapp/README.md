@@ -101,7 +101,7 @@ Response Body:
       <userratingcount>1</userratingcount>
       <bizratingcount>0</bizratingcount>
       <openpositions>0</openpositions>
-      <distance>10.1234</distance>
+      <distance>10.1234</distance> 
    </item>
 </result>
 ```
