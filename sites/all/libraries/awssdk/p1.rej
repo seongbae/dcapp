@@ -1,0 +1,12 @@
+--- AmazonS3StreamWrapper.inc
++++ AmazonS3StreamWrapper.inc
+@@ -589,6 +589,9 @@
+    */
+   public function stream_flush() {
+     if ($this->write_buffer) {
++      // Get an instance of the AmazonS3 class to ensure the class is loaded (via library_load).
++      // This is needed to access the class' constants.
++      $this->getS3();
+       // Set the storage type.
+       $s3_storage_type = AmazonS3::STORAGE_STANDARD;
+       $local_path = $this->getLocalPath();

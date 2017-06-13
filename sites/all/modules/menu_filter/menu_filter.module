@@ -1,0 +1,435 @@
+<?php
+/**
+ * @file
+ * Input filter allowing menu links to be inserted into text as a list or dropdown.
+ */
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function menu_filter_ctools_plugin_api($module, $api) {
+  return array('version' => 2);
+}
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function menu_filter_ctools_plugin_directory($module, $plugin) {
+  if ($module == 'ctools') {
+    return "plugins/$plugin";
+  }
+}
+
+/**
+ * Implements hook_init().
+ */
+function menu_filter_init() {
+  // Add ctools jump menu js to every page
+  if (module_exists('ctools')) {
+    drupal_add_js(drupal_get_path('module', 'ctools') . '/js/jump-menu.js', array('every_page' => TRUE));
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function menu_filter_menu() {
+  // Admin settings
+  $items['admin/config/content/menu_filter'] = array(
+    'title' => 'Menu filter',
+    'description' => 'Global configure settings for the Menu filter module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('menu_filter_admin_settings'),
+    'access arguments' => array('administer site configuration'),
+    'file' => 'menu_filter.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  // Custom callback for Ctools jumpmenu so which can be called by a cache
+  // Ctools jumpmenu.
+  $items['menu_filter/dropdown-redirect'] = array(
+    'page callback' => 'menu_filter_dropdown_redirect',
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_menu_link_alter().
+ */
+function menu_filter_menu_link_alter(&$item) {
+  menu_filter_clear_cache($item['module']);
+}
+
+/**
+ * Implements hook_filter_info().
+ */
+function menu_filter_filter_info() {
+  $filters = array();
+
+  $filters['menu_filter'] = array(
+    'title' => t('Menu filter'),
+    'description' => t("Displays a menu's links as a bullet list, menu tree, dropdown menu, or teasers."),
+    'default settings' => array(),
+    'process callback' => '_menu_filter_process_callback',
+    'tips callback' => '_menu_filter_tips_callback',
+  );
+
+  return $filters;
+}
+
+/**
+ * Menu filter tips callback.
+ */
+function _menu_filter_tips_callback($delta, $format, $long = FALSE) {
+  return "Adding [menu(-tree|-descriptions|-links|-dropdown-teasers): (menu_name={menu_name}|link_path={link_path}|mlid={mlid})] will generate a list of menu links.";
+}
+
+/**
+ * Menu filter process callback.
+ */
+function _menu_filter_process_callback($text) {
+  static $processing = array();
+
+  // Prevent recursion during menu filter processing.
+  $cid = hash('sha256', $text);
+  if (isset($processing[$cid])) {
+    return $text;
+  }
+
+  $processing[$cid] = TRUE;
+  $text = preg_replace_callback('#(?:<p[^>]*>\s*)?\[menu-?(tree|descriptions|links|dropdown|teasers)?:\s*(menu_name|link_path|mlid)=([^\]]+)\](?:\s*</p>)?#', '_menu_filter_process_replacer', $text);
+  $processing[$cid] = FALSE;
+  return $text;
+}
+
+/**
+ * Insert inline menu replacer.
+ */
+function _menu_filter_process_replacer($matches) {
+  $type = ($matches[1]) ? $matches[1] : 'links'; // menu, menu-tree
+  $branch_type = $matches[2];
+  $branch_value = $matches[3];
+  return menu_filter_output($type, $branch_type, $branch_value);
+}
+
+/**
+ * Menu callback for drop down menu if javascript is disabled.
+ *
+ * Used by ctool_jump_menu.
+ */
+function menu_filter_dropdown_redirect() {
+  drupal_goto(preg_replace('#^' . preg_quote(base_path()) . '#', '', $_POST['jump'], 1));
+  exit;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Form alter
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Implements hook_form_alter().
+ */
+function menu_filter_form_menu_item_delete_form_alter(&$form, &$form_state) {
+  $form['#submit'][] = 'menu_filter_form_menu_item_delete_form_submit';
+}
+
+/**
+ * Additional submission handling; For menu item delete form.
+ */
+function menu_filter_form_menu_item_delete_form_submit($form, &$form_state) {
+  menu_filter_clear_cache($form['#item']['module']);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Utility function
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Clear filter cache based on module name.
+ */
+function menu_filter_clear_cache($module) {
+  $menu_filter_clear_cache_modules = variable_get('menu_filter_clear_cache_modules', array('menu' => 'menu', 'book' => 'book'));
+  if (!empty($menu_filter_clear_cache_modules[$module])) {
+    cache_clear_all(NULL, 'cache_filter');
+  }
+}
+
+/**
+ * Get menu tree branch from mlid, link_path, or the active menu item.
+ */
+function menu_filter_get_menu_tree_branch($menu_item, $check_access = TRUE) {
+  if (!$menu_item) {
+    return NULL;
+  }
+
+  // Get tree for only anonymous user account.
+  $tree = _menu_filter_get_menu_tree_all_data($menu_item['menu_name'], $check_access);
+
+  // Get active branch and define inherited settings
+  $active_branch = _menu_filter_get_menu_tree_branch_recursive($tree, $menu_item['mlid']);
+
+  // Set active tree and settings
+  return $active_branch['below'];
+}
+
+/**
+ * Get tree all data for anonymous (default) or current user account.
+ *
+ */
+function _menu_filter_get_menu_tree_all_data($menu_name, $check_access = TRUE) {
+  if ($check_access) {
+    // From: Cracking Drupal - Chapter 4 (pg 59) - Acting as Another User—and Getting Stuck
+    global $user;
+    $current_user = $user;
+    drupal_save_session(FALSE);
+    $user = drupal_anonymous_user();
+    $tree = menu_tree_all_data($menu_name);
+    $user = $current_user;
+    drupal_save_session(TRUE);
+    return $tree;
+  }
+  else {
+    return menu_tree_all_data($menu_name);
+  }
+}
+
+/**
+ * Get menu tree branch.
+ */
+function _menu_filter_get_menu_tree_branch_recursive($tree, $mlid) {
+  foreach ($tree as $branch ) {
+    if ( $branch['link']['mlid'] == $mlid ) {
+      return $branch;
+    }
+    elseif ( !empty($branch['below']) ) {
+      $found_branch = _menu_filter_get_menu_tree_branch_recursive($branch['below'], $mlid);
+      if ($found_branch) {
+        return $found_branch;
+      }
+    }
+  }
+  return NULL;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Output functions.
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Output menu in a selected format
+ */
+function menu_filter_output($type, $branch_type, $branch_value, $check_access = TRUE) {
+  if ( $branch_type == 'menu_name' ) {
+
+    $branch = _menu_filter_get_menu_tree_all_data($branch_value, $check_access);
+
+  }
+  else {
+
+    if ( $branch_type == 'link_path' ) {
+      $menu_item = db_query("SELECT * FROM {menu_links} WHERE link_path = :link_path", array(':link_path' => drupal_get_normal_path($branch_value)))->fetchAssoc();
+    }
+    else {
+      $menu_item = db_query("SELECT * FROM {menu_links} WHERE mlid = :mlid", array(':mlid' => $branch_value))->fetchAssoc();
+    }
+    $branch = menu_filter_get_menu_tree_branch($menu_item, $check_access);
+
+  }
+
+  // Exit if branch is empty
+  if (empty($branch)) {
+    return '';
+  }
+
+  switch ($type) {
+    case 'tree':
+      return drupal_render(menu_tree_output($branch));
+
+    case 'dropdown':
+      return theme('menu_filter_dropdown', array('links' => menu_filter_get_links($branch), 'branch_type' => $branch_type, 'branch_value' => $branch_value));
+
+    case 'teasers':
+      return theme('menu_filter_teasers', array('links' => menu_filter_get_links($branch), 'branch_type' => $branch_type, 'branch_value' => $branch_value));
+
+    case 'descriptions':
+      $links = menu_filter_get_links($branch);
+      // If a link has no title attribute or link title and attribute title are the same then try to use node's teaser.
+      foreach ($links as &$link) {
+        if ((empty($link['attributes']['title']) || ($link['title'] == $link['attributes']['title']))
+             && preg_match('/^node\/(\d+)/', $link['href'], $match)) {
+          $node = node_load($match[1]);
+          if ($node && !empty($node->body['und'][0]['safe_summary'])) {
+            $link['attributes']['title'] = $node->body['und'][0]['safe_summary'];
+          }
+        }
+        // Remove link attributes title that are identical to link title.
+        if (!empty($link['attributes']['title']) && $link['title'] == $link['attributes']['title']) {
+          unset($link['attributes']['title']);
+        }
+      }
+      $output = theme('menu_filter_descriptions', array('links' => $links, 'branch_type' => $branch_type, 'branch_value' => $branch_value));
+      return '<div class="menu-filter menu-filter-descriptions">' . $output . '</div>';
+
+    case 'links':
+    default:
+      $links = menu_filter_get_links($branch);
+      $output = theme('menu_filter_links', array('links' => $links, 'branch_type' => $branch_type, 'branch_value' => $branch_value));
+      return '<div class="menu-filter menu-filter-links">' . $output . '</div>';
+
+  }
+}
+
+/**
+ * Return an array of links for a menu tree or branch.
+ *
+ * @see menu_navigation_links()
+ */
+function menu_filter_get_links($tree) {
+  // Create a single level of links.
+  $links = array();
+  foreach ($tree as $item) {
+    if (!$item['link']['hidden']) {
+      $class = '';
+      $link = $item['link']['localized_options'];
+      $link['href'] = $item['link']['href'];
+      $link['title'] = $item['link']['title'];
+      if ($item['link']['in_active_trail']) {
+        $class = ' active-trail';
+      }
+      // Keyed with the unique mlid to generate classes in theme_links().
+      $links['menu-' . $item['link']['mlid'] . $class] = $link;
+    }
+  }
+  return $links;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Theme functions
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Implements hook_theme().
+ */
+function menu_filter_theme() {
+  return array(
+    'menu_filter_links' => array(
+      'variables' => array('links' => array(), 'branch_type' => NULL, 'branch_value' => NULL),
+    ),
+    'menu_filter_descriptions' => array(
+      'variables' => array('links' => array(), 'branch_type' => NULL, 'branch_value' => NULL),
+    ),
+    'menu_filter_dropdown' => array(
+      'variables' => array('links' => array(), 'branch_type' => NULL, 'branch_value' => NULL),
+    ),
+    'menu_filter_teasers' => array(
+      'variables' => array('links' => array(), 'branch_type' => NULL, 'branch_value' => NULL),
+    ),
+  );
+}
+
+/**
+ * Theme menu links.
+ */
+function theme_menu_filter_links($variables) {
+  $links = $variables['links'];
+  $branch_type = $variables['branch_type'];
+  $branch_value = $variables['branch_value'];
+  return theme('links', array('links' => $links, 'attributes' => array()));
+}
+
+/**
+ * Theme menu descriptions.
+ */
+function theme_menu_filter_descriptions($variables) {
+  $links = $variables['links'];
+  $branch_type = $variables['branch_type'];
+  $branch_value = $variables['branch_value'];
+  $output = theme('links', array('links' => $links, 'attributes' => array()));
+  $output = preg_replace('#(<a[^>]+title=")([^"]+)([^>]*">.*?</a>)#', '\1\2\3<div>\2</div>', $output);
+  return $output;
+}
+
+/**
+ * Theme menu teasers.
+ */
+function theme_menu_filter_teasers($variables) {
+  $links = $variables['links'];
+  $branch_type = $variables['branch_type'];
+  $branch_value = $variables['branch_value'];
+  $output = '<div class="menu-filter-teasers">';
+
+  $num_links = count($links);
+  $i = 1;
+  foreach ($links as &$link) {
+    // Add first and last classes to the list of links to help out themers.
+    $extra_class = '';
+    if ($i == 1) {
+      $extra_class .= ' first';
+    }
+    if ($i == $num_links) {
+      $extra_class .= ' last';
+    }
+
+    $output .= '<div class="menu-filter-teaser' . $extra_class . '">';
+    if (preg_match('/^node\/(\d+)/', $link['href'], $match)) {
+      $output .= drupal_render( node_view(node_load($match[1]), 'teaser') );
+    }
+    else {
+
+      // Mimic core's node.tpl.php styling.
+      $output .= '<h2>' . l($link['title'], $link['href'], $link) . '</h2>';
+      if (!empty($link['attributes']['title'])) {
+        $output .= '<div class="content">' . $link['attributes']['title'] . '</div>';
+      }
+
+    }
+    $output .= '</div>';
+
+    $i++;
+  }
+  $output .= '</div>';
+  return $output;
+}
+
+/**
+ * Theme menu dropdown.
+ */
+function theme_menu_filter_dropdown($variables) {
+  $links = $variables['links'];
+  $branch_type = $variables['branch_type'];
+  $branch_value = $variables['branch_value'];
+  if (empty($links)) {
+    return '';
+  }
+
+  if (module_exists('ctools')) {
+    ctools_include('jump-menu');
+    $targets = array();
+    foreach ($links as $link) {
+      $targets[ url($link['href']) ] = $link['title'];
+    }
+    $output = drupal_render(drupal_get_form('ctools_jump_menu', $targets, array('choose' => 'Select...')));
+    $output = preg_replace('/action="[^"]+"/', 'action="' . url('menu_filter/dropdown-redirect') . '"', $output);
+    return $output;
+  }
+  else {
+    // Requires no JavaScript since the 'q' param is being passed back to /index.php.
+    // If path_redirectl.module is installed it will redirect to the clean url.
+    $output = '<form action="' . base_path() . '" method="get" class="menu-filter-dropdown">';
+    $output .= '<select name="q">';
+    $output .= '<option value="">Select...</option>';
+    foreach ($links as $link) {
+      $output .= '<option value="' . drupal_get_path_alias($link['href']) . '">' . $link['title'] . '</option>';
+    }
+    $output .= '</select>';
+    $output .= '<input type="submit" value="Go" />';
+    $output .= '</form>';
+    return $output;
+  }
+}

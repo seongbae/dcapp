@@ -1,0 +1,60 @@
+<?php 
+/**
+* Implements hook_field_formatter_info().
+*/
+function simple_map_link_field_formatter_info() {
+    $info = array(
+        'website' => array(
+        'label' => t('Open Link in Map'), 
+        'field types' => array('text'),
+        'description' => t('Creates link that opens address in a map application.'),
+        ), 
+    );
+  
+    return $info;
+}
+
+/**
+* Implements hook_field_formatter_view().
+*/
+function simple_map_link_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+    $element = array();
+  
+    //Detect special conditions devices
+    $iPod    = stripos($_SERVER['HTTP_USER_AGENT'],"iPod");
+    $iPhone  = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone");
+    $iPad    = stripos($_SERVER['HTTP_USER_AGENT'],"iPad");
+    $Android = stripos($_SERVER['HTTP_USER_AGENT'],"Android");
+    $webOS   = stripos($_SERVER['HTTP_USER_AGENT'],"webOS");
+
+    // For now, launch Apple Maps on iPhone. For all other devices, use Google Maps.
+    if ($iPhone)
+        $map_link = "http://maps.apple.com/?q=";
+    else
+        $map_link = "http://maps.google.com?q=";
+        
+  switch ($display['type']) {
+    case 'website':
+      foreach ($items as $delta => $item) {
+            $options = array(
+                'html'        => TRUE, 
+                'attributes'  => array(
+                    'title' => 'Open in map',
+                    'target' => '_blank',
+                ),
+            );
+            
+            $address = $item['safe_value'];
+            
+            $link = l($address, $map_link . $address, $options);
+            
+            $element[$delta] = array(
+                '#markup' => $link
+            );
+     }
+      break;
+  }
+  return $element;
+} 
+
+?>

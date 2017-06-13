@@ -659,8 +659,9 @@ span.stMainServices.st-twitter-counter,span.stMainServices.st-facebook-counter {
 div.simplead-container {
 border-style: solid;
 border-width: 1px;
-border-color: gainsboro;
+border-color: #f1f1f1;
 padding: 10px;
+margin-bottom:20px;
 }
 
 /* Search
@@ -738,7 +739,6 @@ body.toolbar-drawer {
 .cm-testimonial-quote {
 	font-size:24px;
 	padding-top:20px;	
-	margin-bottom: 30px;
 }
 
 .cm-testimonial-picture {

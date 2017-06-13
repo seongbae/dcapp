@@ -1,0 +1,11 @@
+name = Currency API
+description = Helps satisfy legacy dependencies.
+core = 7.x
+dependencies[] = currency
+
+; Information added by Drupal.org packaging script on 2013-12-17
+version = "7.x-2.2"
+core = "7.x"
+project = "currency"
+datestamp = "1387288413"
+

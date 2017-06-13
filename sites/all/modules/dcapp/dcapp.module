@@ -261,7 +261,7 @@ function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset,
   $query->join('field_data_field_category','c','n.nid = c.entity_id');
   $query->join('taxonomy_term_data','t','c.field_category_tid = t.tid');
   $query->leftJoin('comment','d','d.nid = n.nid');
-  $query->leftJoin('field_data_field_business_rating','r','n.nid = r.entity_id');
+  $query->leftJoin('field_data_field_business_rating','r','d.cid = r.entity_id');
   $query->leftJoin('field_data_field_open_positions','op','n.nid = op.entity_id');
 
   $query->addField('n', 'created', 'created');
@@ -277,6 +277,7 @@ function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset,
   $query->addExpression('COUNT(op.entity_id)', 'openpositions');
   $query->groupBy('n.nid');
   $query->addField('r', 'field_business_rating_rating', 'rating');
+  $query->addExpression('AVG(r.field_business_rating_rating)','avgrating');
   $query->addField('g','field_business_geofield_lat','latitude');
   $query->addField('g','field_business_geofield_lon','longitude');
   
@@ -460,8 +461,10 @@ function dcapp_find_comments($nid) {
   $query->addField('b', 'comment_body_format', 'body_format');
   $query->addField('c', 'created', 'created');
   $query->addField('c', 'changed', 'changed');
+  $query->addField('r', 'field_business_rating_rating','rating');
   
   $query->join('field_data_comment_body','b','b.entity_id=c.cid');
+  $query->leftJoin('field_data_field_business_rating','r','r.entity_id=c.cid');
 
   // filter by node id
   if ($nid > 0) {

@@ -1,0 +1,5 @@
+name = Simple Map Link
+description = Creates a link formmater that opens various map applications including Google Map and Apple Map.
+package = Simple Map Link
+core = 7.x
+files[] = simple_map_link.module

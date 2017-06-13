@@ -3,8 +3,18 @@
  * remove this comment and start adding your styles to this file.
  */
 
+
+/* Hide Bootstrap Breadcrumb */
+div.breadcrumb {
+	display: none;
+}
+
 body {
-	font-size: 12px;
+	font-size: 14px;
+}
+
+body.admin_menu {
+	padding-top: 0px;
 }
 
 h1.page-header {
@@ -21,6 +31,61 @@ p {
 	line-height: 1.7;
 }
 
+/* Custom, iPhone Retina */ 
+@media only screen and (min-width : 320px) {
+    .panel-panel.panel-col-first, .panel-panel.panel-col-last {
+		width: 99.9%; 
+		clear: both;
+		margin-bottom: 30px;
+	}
+
+	a.flag.flag-action.flag-link-normal {
+		width: 100%;
+		display: block;
+		text-align: center;
+		line-height: 30px;
+	}
+
+	a.flag.unflag-action.flag-link-normal {
+		width: 100%;
+                display: block;
+                text-align: center;
+		line-height: 30px;;
+	}
+
+	div.panel-panel.panel-col-first div.field-name-field-business-logo.field-type-image.field-label-hidden img {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+	.panel-panel.panel-col-first, .panel-panel.panel-col-last {
+		width: 50%; 
+		clear: none;
+	}
+
+	a.flag.flag-action.flag-link-normal {
+                text-align: center;
+                line-height: 20px;
+        }
+
+        a.flag.unflag-action.flag-link-normal {
+                text-align: center;
+                line-height: 20px;;
+        }
+
+	div.panel-panel.panel-col-first div.field-name-field-business-logo.field-type-image.field-label-hidden img {
+                display: inline;
+                margin-left: auto;
+                margin-right: auto;
+        }
+}
+
+
+/* Views */
 .dcapp_center {
 	margin-left: auto;
 	margin-right: auto;
@@ -44,14 +109,31 @@ p {
 .node-teaser {
 }
 
+.view-content div.field.field-name-field-business-rating.field-type-fivestar.field-label-hidden{
+	clear: left;
+}
+
 .navbar-header {
 	padding-top: 2px;
 }
 
+.navbar-default {
+	background-color: #c50b30;
+	border-color: transparent;
+}
+
 .navbar-default .navbar-brand {
 	font-weight: bold;
-	color: #000000;
+	color: #FFF;
+	background-color: #c50b30;
+	border-color: transparent;
 }
+
+.navbar-default .navbar-nav>li>a {
+	color: #FFF;
+}
+
+
 
 .contextual-links-region
 {
@@ -70,6 +152,10 @@ div.region.region-content>div.field.field-name-body {
 
 .content .menu-block-wrapper .nav>li>a {
 	padding: 5px 15px;
+}
+
+.menu-block-wrapper .nav>li>a {
+	padding: 3px 15px;
 }
 
 .content .nav>li>a {
@@ -130,7 +216,8 @@ div.field.field-name-field-featured-photo {
 	float: left;
 }
 
-.views-row div.field.field-name-field-job-image {
+
+.node-teaser .field-name-field-job-image {
 	float: left;
 }
 
@@ -148,6 +235,98 @@ div.field.field-name-field-rental-rent
 
 div.field.field-name-post-date
         padding-bottom:0px;
+}
+
+
+
+/************************
+	Job Content Type
+************************/
+
+
+.views-row div.field.field-name-field-job-image {
+	float: left;
+}
+
+/* Job Category tags */
+
+.views-row .field-name-field-job-category {
+	float: left;
+	padding-right: 0px;
+}
+
+.views-row .field-name-field-job-category .field-items .field-item {
+	display: inline;
+	background-color: #7695AA;
+  	padding: 4px;
+  	color: white;
+  	border-radius: 5px;
+  	margin-right: 10px;
+}
+
+.views-row .field-name-field-job-category .field-items .field-item a {
+	color: #fff;
+	font-size: 12px;
+}
+
+/* Job Type tags */
+.views-row .field-name-field-job-type .field-items .field-item {
+	display: inline;
+	background-color: #7695AA;
+  	padding: 4px;
+  	color: white;
+  	border-radius: 5px;
+  	margin-right: 10px;
+}
+
+.views-row .field-name-field-job-type .field-items .field-item a {
+	color: #fff;
+	font-size: 12px;
+}
+
+
+div.field.field-name-field-job-category.field-type-taxonomy-term-reference.field-label-hidden {
+	
+}
+.content .field-name-field-job-category {
+	display: inline;
+	float: left;
+	padding-right: 0px;
+}
+.content .field-name-field-job-category .field-items {
+	display: inline;
+}
+.content .field-name-field-job-category .field-items .field-item {
+	display: inline;
+	background-color: #7695AA;
+  	padding: 4px;
+  	color: white;
+  	border-radius: 5px;
+  	margin-right: 10px;
+}
+.content .field-name-field-job-category .field-items .field-item a {
+	color: #fff;
+	font-size: 12px;
+}
+
+.content .field-name-field-job-type {
+	display: inline;
+	float: left;
+}
+.content .field-name-field-job-type .field-items {
+	display: inline;
+}
+.content .field-name-field-job-type .field-items .field-item {
+	display: inline;
+	background-color: #7695AA;
+  	padding: 4px;
+  	color: white;
+  	border-radius: 5px;
+  	margin-right: 10px;
+}
+.content .field-name-field-job-type .field-items .field-item a {
+	color: #fff;
+	font-size: 12px;
 }
 
 
@@ -190,12 +369,34 @@ img {
           max-width: 100%;
    }
 
+/* Comment */
+div.comment {
+	border: 1px;
+    	border-style: solid;
+    	border-color: gainsboro;
+    	padding-left: 20px;
+    	margin-top: 10px;
+    	margin-bottom: 20px;
+    	padding-bottom: 10px;
+}
 div.comment > h3 > a {
 	display:none;
 }
 
+div.indented {
+	margin-left: 50px;
+}
+
+div.indented .field-name-field-business-rating {
+	display: none;
+}
+
+div.comment .submitted-by {
+	color: #b3b3b3;
+}
+
 section.block-menu-block, section.block-block {
-	border: 1px solid lightgrey;
+	border: 0px solid lightgrey;
 	padding: 10px 10px 10px 10px;
 	margin-bottom: 10px;
 	
@@ -235,8 +436,26 @@ img.badge {
 	display: inline !important;
 }
 
-/* Busines 
+/* Business 
  */
+
+/* Business Views */
+
+/* tags on views */
+.views-row .field-name-field-category .field-items .field-item {
+	display: inline;
+	background-color: #7695AA;
+  	padding: 4px;
+  	color: white;
+  	border-radius: 5px;
+  	margin-right: 10px;
+}
+
+.views-row .field-name-field-category .field-items .field-item a {
+	color: #fff;
+	font-size: 12px;
+}
+
 
 .group-footer div.field-item.even, .group-footer div.field-item.odd {
 	padding-right: 10px;
@@ -251,12 +470,122 @@ div.content div.field.field-name-field-business-rating {
 	padding-right:20px;
 }
 
-/* DCApp Topic
+.content .field-name-field-category {
+	display: inline;
+	float: left;
+}
+.content .field-name-field-category .field-items {
+	display: inline;
+}
+.content .field-name-field-category .field-items .field-item {
+	display: inline;
+	background-color: #7695AA;
+  	padding: 4px;
+  	color: white;
+  	border-radius: 5px;
+  	margin-right: 10px;
+}
+
+
+.content .field-name-field-category .field-items .field-item a {
+	color: #fff;
+	font-size: 12px;
+}
+
+a.flag.flag-action.flag-link-normal {
+        padding: 5px 10px;
+        background: #4479BA;
+        color: #FFF;
+    	-webkit-border-radius: 4px;
+    	-moz-border-radius: 4px;
+    	border-radius: 4px;
+    	border: solid 1px #20538D;
+    	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+    	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+    	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+    	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+a.flag.flag-action.flag-link-normal:hover, a.flag.flag-action.flag-link-normal:focus {
+	background: #356094;
+    	border: solid 1px #2A4E77;
+    	text-decoration: none;
+}
+
+a.flag.unflag-action.flag-link-normal {
+        padding: 5px 10px;
+        background: #ba4a44;
+        color: #FFF;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        border: solid 1px #20538D;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+        -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+        -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+a.flag.unflag-action.flag-link-normal:hover, a.flag.unflag-action.flag-link-normal:focus {
+        background: #943b36;
+        border: solid 1px #2A4E77;
+        text-decoration: none;
+}
+
+div.panel-panel.panel-col-middle .inside div.field-item.even, div.panel-panel.panel-col-middle .inside div.field-item.odd {
+	display: inline;
+	margin-right: 10px;
+}
+
+div.panel-panel.panel-col-bottom .inside div.field-item.even, div.panel-panel.panel-col-bottom .inside div.field-item.odd {
+        display: inline;
+        margin-right: 10px;
+}
+
+
+
+/* Topic
  */
 
 div.field-name-field-additional-photos .field-items .field-item.even, div.field-name-field-additional-photos .field-items .field-item.odd {
         display: inline;
 	padding-right: 10px;
+}
+
+/* tags on views */
+.views-row .field-name-field-topic-tags .field-items .field-item {
+	display: inline;
+	background-color: #7695AA;
+  	padding: 4px;
+  	color: white;
+  	border-radius: 5px;
+  	margin-right: 10px;
+}
+
+.views-row .field-name-field-topic-tags .field-items .field-item a {
+	color: #fff;
+	font-size: 12px;
+}
+
+.content .field-name-field-topic-tags {
+	display: inline;
+	float: left;
+}
+
+.content .field-name-field-topic-tags .field-items {
+	display: inline;
+}
+.content .field-name-field-topic-tags .field-items .field-item {
+	display: inline;
+	background-color: #7695AA;
+  	padding: 4px;
+  	color: white;
+  	border-radius: 5px;
+  	margin-right: 10px;
+}
+.content .field-name-field-topic-tags .field-items .field-item a {
+	color: #fff;
+	font-size: 12px;
 }
 
 /* Announcement
@@ -268,9 +597,12 @@ ul.tabs--primary.nav.nav-tabs {
 	/*display:none;*/
 }
 
+/*
 ul.links.list-inline {
 	padding-top: 20px;
 }
+*/
+
 div.view-empty
 {
 }
@@ -298,8 +630,8 @@ span.stMainServices.st-twitter-counter,span.stMainServices.st-facebook-counter {
 
 .node-teaser {
   border-bottom: 1px solid #d3d7d9;
-  margin-bottom: 10px;
-  padding-bottom: 5px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
 }
 
 /*
@@ -335,5 +667,77 @@ padding: 10px;
  *   */
 div.form-type-checkbox.form-item-retain-filters.form-item.checkbox {
         display: none;
+}
+
+.comment_forbidden>span {
+	display: none;
+}
+
+table.table tr td:nth-child(2), table.table tr td:nth-child(4) {
+	text-align: left;
+}
+
+body.toolbar-drawer {
+	padding-top: 30px!important;
+}
+
+.single-feature {
+    float: left;
+    width: 33.33%;
+    padding: 0 2%;
+    text-align: center;
+}
+
+.cm-form {
+	width: 60%;
+	margin: auto;
+}
+
+.cm-panel-separator-top {
+	border-top: 1px solid #d3d7d9;
+}
+
+.cm-panel-separator {
+	clear: both;
+	margin-bottom: 50px;
+}
+
+.cm-testimonial {
+	border-top: 1px solid #d3d7d9;
+	border-bottom: 1px solid #d3d7d9;
+	padding-top: 50px;
+	padding-bottom: 50px;
+	margin-bottom: 30px;
+}
+
+.cm-testimonial-quote-pic {
+	float: left;
+	padding-left:100px;
+}
+
+.cm-testimonial-quote {
+	font-size:24px;
+	padding-top:20px;	
+}
+
+.cm-testimonial-picture {
+	width: 100%;
+	clear: both;
+}
+
+.cm-testimonial-picture img {
+	margin: auto;
+}
+
+.cm-testimonial-name {
+	font-size: 24px;
+	font-weight: bold;
+	text-align: center;
+}
+
+
+.cm-testimonial-title {
+	margin-top: 10px;
+	text-align: center;
 }
 

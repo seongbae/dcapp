@@ -1,0 +1,13 @@
+name = Menu filter
+description = Input filter allowing menu links to be inserted into text as a list or dropdown.
+core = 7.x
+package = Input filters
+files[] = menu_filter.admin.inc
+configure = admin/config/content/menu_filter
+
+; Information added by drupal.org packaging script on 2012-06-28
+version = "7.x-1.0-beta3"
+core = "7.x"
+project = "menu_filter"
+datestamp = "1340882803"
+

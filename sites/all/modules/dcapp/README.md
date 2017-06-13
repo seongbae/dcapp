@@ -54,6 +54,7 @@ Response Body:
 ### GET /dcapp_business
 
 This endpoint has two functions: index and retrieve.  Index function returns list of businesses.  When latitude (lat) and longitude (lon) are provided, it will return distance field with distance in miles from a business to the coordinates provided sorted by distance from lowest to highest.  Retrieve function returns a single business.
+>>>>>>> 2ceab701254c4a7088a6abe58e4d686cbc014e20
 
 #### index
 
@@ -67,6 +68,7 @@ dcapp_business accepts following parameters:
 XML Example: http://example.com/api/v1/dcapp_business?tid=212&limit=20&offset=0&lat=38.885057&lon=-77.39772
 
 JSON Example: http://example.com/api/v1/dcapp_business.json?tid=212&limit=20&offset=0&lat=38.885057&lon=-77.39772
+>>>>>>> 2ceab701254c4a7088a6abe58e4d686cbc014e20
 
 Response Body:
 ```

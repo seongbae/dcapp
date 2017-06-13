@@ -1,0 +1,26 @@
+From 1c733fd3f9b420e3f7d7c48ca3fea897b2dda1e8 Mon Sep 17 00:00:00 2001
+From: Pierre Buyle <buyle@pheromone.ca>
+Date: Mon, 4 Aug 2014 11:07:57 -0400
+Subject: [PATCH] Issue #2215007: Class AmazonS3 not found.
+
+---
+ AmazonS3StreamWrapper.inc | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/AmazonS3StreamWrapper.inc b/AmazonS3StreamWrapper.inc
+index b8c9925..6d8e5da 100644
+--- a/AmazonS3StreamWrapper.inc
++++ b/AmazonS3StreamWrapper.inc
+@@ -589,6 +589,9 @@ class AmazonS3StreamWrapper implements DrupalStreamWrapperInterface {
+    */
+   public function stream_flush() {
+     if ($this->write_buffer) {
++      // Get an instance of the AmazonS3 class to ensure the class is loaded (via library_load).
++      // This is needed to access the class' constants.
++      $this->getS3();
+       // Set the storage type.
+       $s3_storage_type = AmazonS3::STORAGE_STANDARD;
+       $local_path = $this->getLocalPath();
+-- 
+1.9.1
+

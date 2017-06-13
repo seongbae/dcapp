@@ -1,0 +1,192 @@
+<?php
+
+/**
+ * @file
+ * Tests for Date module.
+ */
+
+
+/**
+ * Test Date module microdata placement.
+ */
+class DateTestCase extends MicrodataFieldTestCase {
+
+  /**
+   * Sets the display information for the tests
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Microdata markup - date field',
+      'description' => 'Microdata integration test for Date field.',
+      'group' => 'Microdata Field Integration',
+    );
+  }
+
+  /**
+   * Implements DrupalWebTestCase::setUp().
+   */
+  public function setUp() {
+    $this->dateTypes = array(
+      'date',
+      'datetime',
+      'datestamp',
+    );
+    $this->fieldFormatterTypes = array(
+      'date_default',
+    );
+    parent::setUp('date');
+    variable_set('date_format_long', 'D, m/d/Y - H:i');
+  }
+
+  /**
+   * Implements MicrodataFieldTestCase::getFields().
+   */
+  protected function getFields() {
+    // Create fields for each date type.
+    $fields = array();
+    foreach ($this->dateTypes as $date_type) {
+      foreach ($this->fieldFormatterTypes as $type) {
+        $fields[] = array(
+          'field_name' => "{$date_type}_{$type}",
+          'type' => $date_type,
+          'settings' => array(
+            'todate' => 'optional',
+          ),
+        );
+      }
+    }
+    // Create an extra one for testing the single date formatter.
+    $fields[] = array(
+      'field_name' => 'single_date',
+      'type' => 'datestamp',
+      'settings' => array(
+        'todate' => FALSE,
+      ),
+    );
+    return $fields;
+  }
+
+  /**
+   * Implements MicrodataFieldTestCase::getInstances().
+   */
+  protected function getInstances() {
+    // Create instances for the field collection and for the field group.
+    $instances = array();
+    foreach ($this->dateTypes as $date_type) {
+      foreach ($this->fieldFormatterTypes as $type) {
+        $instances[] = array(
+          'field_name' => "{$date_type}_{$type}",
+          'entity_type' => $this->entityType,
+          'bundle' => $this->bundleType,
+          'display' => array(
+            'default' => array(
+              'label' => 'hidden',
+              'type' => $type,
+            ),
+          ),
+        );
+      }
+    }
+    $instances[] = array(
+      'field_name' => "single_date",
+      'entity_type' => $this->entityType,
+      'bundle' => $this->bundleType,
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+          'type' => 'default',
+        ),
+      ),
+    );
+    return $instances;
+  }
+
+  /**
+   * Implements MicrodataFieldTestCase::getMapping().
+   */
+  protected function getMapping() {
+    foreach ($this->dateTypes as $date_type) {
+      foreach ($this->fieldFormatterTypes as $type) {
+        $mapping[$this->entityType][$this->bundleType]["{$date_type}_{$type}"] = array(
+          'value' => array(
+            '#itemprop' => array("{$date_type}_{$type}_start"),
+          ),
+          'value2' => array(
+            '#itemprop' => array("{$date_type}_{$type}_end"),
+          ),
+        );
+      }
+    }
+    $mapping[$this->entityType][$this->bundleType]['single_date'] = array(
+      '#itemprop' => array("single_date_start"),
+    );
+    return $mapping;
+  }
+
+  /**
+   * Converts date to ISO format
+   */
+  protected function iso8601($time = FALSE) {
+    if ($time === FALSE) {
+      $time = time();
+    }
+    $date = date('Y-m-d\TH:i:sO', $time);
+    return (substr($date, 0, strlen($date) - 2) . ':' . substr($date, -2));
+  }
+
+  /**
+   * Tests whether microdata is correctly outputted, depending on the field
+   * formatter type.
+   */
+  public function testMarkup() {
+    $date_start = strtotime("10/07/2010T10:30");
+    $date_end = strtotime("10/08/2010T10:30");
+
+    $node = $this->drupalCreateNode(array('type' => $this->bundleType, 'promote' => 1));
+    foreach ($this->dateTypes as $date_type) {
+      foreach ($this->fieldFormatterTypes as $type) {
+        $edit["{$date_type}_{$type}[und][0][value][year]"] = date('Y', $date_start);
+        $edit["{$date_type}_{$type}[und][0][value][month]"] = date('m', $date_start);
+        $edit["{$date_type}_{$type}[und][0][value][day]"] = date('j', $date_start);
+        $edit["{$date_type}_{$type}[und][0][value][hour]"] = date('H', $date_start);
+        $edit["{$date_type}_{$type}[und][0][value][minute]"] = date('i', $date_start);
+
+        $edit["{$date_type}_{$type}[und][0][show_todate]"] = '1';
+
+        $edit["{$date_type}_{$type}[und][0][value2][year]"] = date('Y', $date_end);
+        $edit["{$date_type}_{$type}[und][0][value2][month]"] = date('m', $date_end);
+        $edit["{$date_type}_{$type}[und][0][value2][day]"] = date('j', $date_end);
+        $edit["{$date_type}_{$type}[und][0][value2][hour]"] = date('H', $date_end);
+        $edit["{$date_type}_{$type}[und][0][value2][minute]"] = date('i', $date_end);
+      }
+    }
+    $edit["single_date[und][0][value][year]"] = date('Y', $date_start);
+    $edit["single_date[und][0][value][month]"] = date('m', $date_start);
+    $edit["single_date[und][0][value][day]"] = date('j', $date_start);
+    $edit["single_date[und][0][value][hour]"] = date('H', $date_start);
+    $edit["single_date[und][0][value][minute]"] = date('i', $date_start);
+
+    $this->drupalPost('node/' . $node->nid . '/edit', $edit, t('Save'));
+
+    // Get the microdata result for the page.
+    $md = $this->parseMicrodata();
+
+    // Get the entity as a microdata item.
+    $item = $md->items[0];
+
+    foreach ($this->dateTypes as $date_type) {
+      foreach ($this->fieldFormatterTypes as $type) {
+        $text_itemprop = "{$date_type}_{$type}_start";
+        $this->assertEqual($this->iso8601($date_start), $item->properties[$text_itemprop][0], "Itemprop is placed on {$text_itemprop}");
+        $text_itemprop = "{$date_type}_{$type}_end";
+        $this->assertEqual($this->iso8601($date_end), $item->properties[$text_itemprop][0], "Itemprop is placed on {$text_itemprop}");
+      }
+    }
+    // Single date.
+    $text_itemprop = "single_date_start";
+    $this->assertTrue(array_search($this->iso8601($date_start), $item->properties[$text_itemprop]) !== FALSE, "Itemprop is placed on single date.");
+    $this->assertTrue(count($item->properties[$text_itemprop]) == 1, "Only machine readable value found for single date.");
+    $text_itemprop = "single_date_end";
+    $this->assertTrue(!isset($item->properties[$text_itemprop][0]), "Microdata is not placed for single date ending value.");
+  }
+}
