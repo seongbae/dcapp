@@ -20,6 +20,7 @@
   <?php print $styles; ?>
   <?php print $scripts; ?>
 </head>
+hello world
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
 
   <div id="skip-link">

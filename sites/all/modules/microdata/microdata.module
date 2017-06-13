@@ -214,7 +214,11 @@ function microdata_entity_info_alter(&$entity_info) {
   // If this is called the entity info cache is rebuild and we need to rebuild
   // the mapping cache as well.
   drupal_static_reset('microdata_get_mapping');
-  cache_clear_all('microdata_get_mapping', 'cache', TRUE);
+  // Don't use wildcard flushing to enhance compatibility with memory caches
+  // like memcache / redis. Wildcards are hard to handle and we know the keys.
+  foreach (language_list() as $language) {
+    cache_clear_all('microdata_get_mapping:' . $language->language, 'cache');
+  }
 }
 
 /**

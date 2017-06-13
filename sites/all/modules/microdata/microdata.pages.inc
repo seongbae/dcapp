@@ -17,6 +17,10 @@ function microdata_autocomplete_itemtype($input = '') {
   $string = drupal_strtolower(array_pop($input));
 
   $types = microdata_get_types();
+  if (empty($types)) {
+    drupal_json_output(array('' => t('No active vocabularies found. Please enable at least one vocabulary.')));
+    die();
+  }
   if ($string) {
     $prefix = count($input) ? drupal_implode_tags($input) . ', ' : '';
     foreach ($types as $type) {
@@ -38,14 +42,20 @@ function microdata_autocomplete_itemprop($itemtype, $input = '') {
   $string = drupal_strtolower(array_pop($input));
 
   $types = microdata_get_types();
+  if (empty($types)) {
+    drupal_json_output(array('' => t('No active vocabularies found. Please enable at least one vocabulary.')));
+    die();
+  }
   if ($string) {
     $prefix = count($input) ? drupal_implode_tags($input) . ', ' : '';
     // Decode the itemtype arg, replace the '/'s, and explode it into an array.
     $itemtypes = explode(', ', str_replace(';', '/', urldecode($itemtype)));
     foreach ($itemtypes as $type) {
-      foreach ($types[$type]['properties'] as $property) {
-        if (preg_match("/$string/", $property)) {
-          $matches[$prefix . check_plain($property)] = check_plain($property);
+      if (isset($types[$type]['properties'])) {
+        foreach ($types[$type]['properties'] as $property) {
+          if (preg_match("/$string/", $property)) {
+            $matches[$prefix . check_plain($property)] = check_plain($property);
+          }
         }
       }
     }
@@ -104,7 +114,7 @@ function microdata_get_vocabularies() {
         module_load_include('inc', 'microdata', 'microdata.admin');
         if ($data = microdata_update_vocabulary_schema($vocabulary_info[$vocab_name]['import_url'])) {
           $schema = json_decode($data);
-          cache_set($vocab_name, $data, 'cache_microdata_vocabulary');
+          cache_set($vocab_name, $schema, 'cache_microdata_vocabulary');
         }
       }
       // @todo Remove the array conversion once Vocabulary Parser is in place.

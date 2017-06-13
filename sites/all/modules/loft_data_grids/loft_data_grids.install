@@ -14,6 +14,7 @@
  * http://api.drupal.org/api/function/hook_requirements
  *
  * @param phase 'install' or 'runtime':
+ *
  * @return A keyed array of requirements
  */
 function loft_data_grids_requirements($phase) {
@@ -22,8 +23,8 @@ function loft_data_grids_requirements($phase) {
   if ($phase == 'runtime') {
     $info = loft_data_grids_info();
     $reqs['loft_data_grids'] = array(
-      'title' => $info['name'],
-      'value' => isset($info['homepage']) ? l($info['version'], $info['homepage']) : $info['version'],
+      'title'    => $info['name'],
+      'value'    => isset($info['homepage']) ? l($info['version'], $info['homepage']) : $info['version'],
       'severity' => REQUIREMENT_OK,
     );
     if (empty($info['installed'])) {
@@ -37,6 +38,6 @@ function loft_data_grids_requirements($phase) {
       $reqs['loft_data_grids']['severity'] = REQUIREMENT_ERROR;
     }
   }
-  
+
   return $reqs;
 }

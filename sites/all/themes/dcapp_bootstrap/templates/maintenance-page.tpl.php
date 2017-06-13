@@ -22,6 +22,30 @@
   <?php print $head; ?>
   <?php print $styles; ?>
   <?php print $scripts; ?>
+  <style>
+    #page { 
+      background: url(sites/all/themes/dcapp_bootstrap/images/bg.jpeg) no-repeat center center fixed; 
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+    }
+
+    html, body, #page {
+      height: 100%;
+  }
+
+  #page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #content {
+    color: white;
+    
+  </style>
+  }
 </head>
 <body class="<?php print $classes; ?>">
   <div id="page">
@@ -36,9 +60,7 @@
 
         <div id="name-and-slogan">
           <?php if (!empty($site_name)): ?>
-            <h1 id="site-name">
-              <a href="<?php print $base_path ?>" title="<?php print t('Home'); ?>" rel="home"><span><?php print $site_name; ?></span></a>
-            </h1>
+            
           <?php endif; ?>
 
           <?php if (!empty($site_slogan)): ?>
@@ -66,7 +88,7 @@
       <div id="main" class="column"><div id="main-squeeze">
 
         <div id="content">
-          <?php if (!empty($title)): ?><h1 class="title" id="page-title"><?php print $title; ?></h1><?php endif; ?>
+          <?php if (!empty($title)): ?><h1 class="title" id="page-title">DCApp is under maintenance.</h1><?php endif; ?>
           <?php if (!empty($messages)): print $messages; endif; ?>
           <div id="content-content" class="clearfix">
             <?php print $content; ?>
