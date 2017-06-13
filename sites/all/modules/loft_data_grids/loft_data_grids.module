@@ -22,8 +22,8 @@ function loft_data_grids_permission() {
   $perms = array();
   foreach (loft_data_grids_export_info() as $data) {
     $perms['loft_data_grids:' . $data['id']] = array(
-     'title' => t('Visible in UI: @id', array('@id' => $data['name'])),
-     'description' => check_plain($data['description']),
+      'title'       => t('Visible in UI: @id', array('@id' => $data['name'])),
+      'description' => check_plain($data['description']),
     );
   }
 
@@ -49,19 +49,20 @@ function loft_data_grids_info() {
   $info = &drupal_static(__FUNCTION__, array());
   if (empty($info)) {
     $info = array(
-      'path' => drupal_get_path('module', 'loft_data_grids') . '/vendor/aklump/loft_data_grids', 
-      'loaded' => class_exists(loft_data_grids_ns('Exporter')), 
+      'path'   => drupal_get_path('module', 'loft_data_grids') . '/vendor/aklump/loft_data_grids',
+      'loaded' => class_exists(loft_data_grids_ns('Exporter')),
     );
 
     $info_file = $info['path'] . '/loft_data_grids.info';
     if (($info['installed'] = file_exists($info_file))
-      && ($parsed = parse_ini_file($info_file))) {
+      && ($parsed = parse_ini_file($info_file))
+    ) {
       $info += $parsed;
     }
 
     $info += array(
-      'name' => pathinfo(__FILE__, PATHINFO_FILENAME), 
-      'version' => '', 
+      'name'      => pathinfo(__FILE__, PATHINFO_FILENAME),
+      'version'   => '',
       'installed' => FALSE,
     );
   }
@@ -78,12 +79,12 @@ function _loft_data_grids_get_exporter_names() {
   $exporters = &drupal_static(__FUNCTION__, array());
   if (empty($exporters)) {
     if ($cache = cache_get('loft_data_grids:exporters', 'cache')) {
-     $exporters = empty($cache->data) ? NULL : $cache->data;
+      $exporters = empty($cache->data) ? NULL : $cache->data;
     }
     else {
-     // Set the default values
-     $exporters = array();
-     $cache = (object) array('data' => array());
+      // Set the default values
+      $exporters = array();
+      $cache = (object) array('data' => array());
     }
     if (empty($exporters)) {
       $info = loft_data_grids_info();
@@ -106,13 +107,13 @@ function _loft_data_grids_get_exporter_names() {
         }
 
         // Formatters added by our module.
-        $exporters[] = 'DrupalTableExporter';        
-        
+        $exporters[] = 'DrupalTableExporter';
+
         cache_set('loft_data_grids:exporters', $exporters, 'cache', CACHE_PERMANENT);
       }
     }
   }
-  
+
   return $exporters;
 }
 
@@ -120,7 +121,7 @@ function _loft_data_grids_get_exporter_names() {
  * Return an array of exporters info
  *
  * @param  bool $check_access (Optional, defaults to FALSE) Should the current
- * users permission be applied against all exporters?
+ *                            users permission be applied against all exporters?
  *
  * @return array
  *   Keyed by classname (not fully qualified with ns use loft_data_grids_ns())
@@ -129,14 +130,13 @@ function loft_data_grids_export_info($check_access = FALSE) {
   $info = &drupal_static(__FUNCTION__, array());
   if (empty($info) && ($data = loft_data_grids_export_data())) {
     $classnames = _loft_data_grids_get_exporter_names();
-    $classes = array();
     foreach ($classnames as $classname) {
       $object = loft_data_grids_exporter($data, $classname);
       $info[$classname] = array(
-        'id' => $classname,
-      ) + $object->getInfo();
+          'id' => $classname,
+        ) + $object->getInfo();
     }
-    drupal_alter('loft_data_grids_export_info', $info);      
+    drupal_alter('loft_data_grids_export_info', $info);
   }
 
   if ($check_access) {
@@ -202,6 +202,8 @@ function loft_data_grids_ns($classname) {
  *
  * @param mixed $page_id
  *   (Optional) Defaults to 0.
+ *
+ * @return bool|mixed
  */
 function loft_data_grids_export_data($page_id = 0, $classname = 'ExportData') {
   $classname = loft_data_grids_ns($classname);
@@ -219,10 +221,12 @@ function loft_data_grids_export_data($page_id = 0, $classname = 'ExportData') {
  * locations such as PHPExcel
  *
  * @param ExportDataInterface $data
- * @param string $classname
+ * @param string              $classname
  *   The name of any of the various Exporter classes
- * @param string $filename
+ * @param string              $filename
  *   (Optional) Defaults to ''.
+ *
+ * @return mixed
  */
 function loft_data_grids_exporter(ExportDataInterface $data, $classname, $filename = '') {
   $classname = loft_data_grids_ns($classname);
@@ -237,10 +241,12 @@ function loft_data_grids_exporter(ExportDataInterface $data, $classname, $filena
 }
 
 /**
- * Instantiate a new Formatter object
+ * Instantiate a new Formatter object.
  *
- * @param mixed $text
+ * @param mixed  $text
  * @param string $classname Name of the formatter
+ *
+ * @return mixed|false
  */
 function loft_data_grids_formatter($text, $classname) {
   $classname = loft_data_grids_ns($classname);

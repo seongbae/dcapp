@@ -4,9 +4,9 @@ version = "0.4.17"
 author = Aaron Klump <sourcecode@intheloftstudios.com>
 homepage = http://www.intheloftstudios.com/packages/php/loft_data_grids
 
-; Information added by Drupal.org packaging script on 2016-03-31
-version = "7.x-2.1"
+; Information added by Drupal.org packaging script on 2016-07-08
+version = "7.x-2.2"
 core = "7.x"
 project = "loft_data_grids"
-datestamp = "1459463942"
+datestamp = "1468015147"
 

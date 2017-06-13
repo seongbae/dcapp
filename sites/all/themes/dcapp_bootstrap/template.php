@@ -87,3 +87,88 @@ function dcapp_bootstrap_preprocess_field(&$vars, $hook) {
     $vars['items'][0]['#markup'] = nl2br($vars['items'][0]['#markup']);
   }
 }
+
+
+function dcapp_bootstrap_fivestar_summary($variables) {
+  $microdata = $variables['microdata'];
+  extract($variables, EXTR_SKIP);
+  $output = '';
+  $div_class = '';
+  $average_rating_microdata = '';
+  $rating_count_microdata = '';
+  if (isset($user_rating)) {
+    $div_class = isset($votes) ? 'user-count' : 'user';
+    $user_stars = round(($user_rating * $stars) / 100, 1);
+    $output .= '<span class="user-rating">' . t('Your rating: <span>!stars</span>', array('!stars' => $user_rating ? $user_stars : t('None'))) . '</span>';
+  }
+  if (isset($user_rating) && isset($average_rating)) {
+    $output .= ' ';
+  }
+  if (isset($average_rating)) {
+    if (isset($user_rating)) {
+      $div_class = 'combo';
+    }
+    else {
+      $div_class = isset($votes) ? 'average-count' : 'average';
+    }
+
+    $average_stars = round(($average_rating * $stars) / 100, 1);
+    if (!empty($microdata['average_rating']['#attributes'])) {
+      $average_rating_microdata = drupal_attributes($microdata['average_rating']['#attributes']);
+    }
+    $output .= '<span class="average-rating">' . t('Rating: !stars',
+      array('!stars' => "<span $average_rating_microdata>$average_stars</span>")) . '</span>';
+  }
+
+  if (isset($votes)) {
+    if (!isset($user_rating) && !isset($average_rating)) {
+      $div_class = 'count';
+    }
+    if ($votes === 0) {
+      $output = '<span class="empty"></span>';
+    }
+    else {
+      if (!empty($microdata['rating_count']['#attributes'])) {
+        $rating_count_microdata = drupal_attributes($microdata['rating_count']['#attributes']);
+      }
+      // We don't directly substitute $votes (i.e. use '@count') in format_plural,
+      // because it has a span around it which is not translatable.
+      $votes_str = format_plural($votes, '!cnt review', '!cnt reviews', array(
+        '!cnt' => '<span ' . $rating_count_microdata . '>' . intval($votes) . '</span>'));
+      if (isset($user_rating) || isset($average_rating)) {
+        $output .= ' <span class="total-votes">(' . $votes_str . ')</span>';
+      }
+      else {
+        $output .= ' <span class="total-votes">' . $votes_str . '</span>';
+      }
+    }
+  }
+
+
+  $output = '<div class="fivestar-summary fivestar-summary-' . $div_class . '">' . $output . '</div>';
+  return $output;
+}
+
+
+/**
+ * Display a static fivestar value as stars with a title and description.
+ */
+function dcapp_bootstrap_fivestar_static_element($variables) {
+  $output = '';
+  if (isset($variables['is_form']) && !$variables['is_form']) {
+    $output .= '<div class="fivestar-static-item">';
+  }
+  else {
+    $output .= '<div class="fivestar-static-form-item">';
+  }
+  $element = array(
+    '#type' => 'item',
+    '#title' => $variables['title'],
+    '#description' => $variables['description'],
+    '#children' => $variables['star_display'],
+  );
+
+  $output .= theme('form_element', array('element' => $element));
+  $output .= '</div>';
+  return $output;
+}

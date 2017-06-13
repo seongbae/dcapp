@@ -113,17 +113,17 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.3.39",
+            "version": "v2.3.42",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "d5a6f4c771ae5d3faedda30eeb8db4cfb40a59fe"
+                "reference": "2cb5f366f9e0df014fc93de46cc416ba0a3055f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/d5a6f4c771ae5d3faedda30eeb8db4cfb40a59fe",
-                "reference": "d5a6f4c771ae5d3faedda30eeb8db4cfb40a59fe",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/2cb5f366f9e0df014fc93de46cc416ba0a3055f8",
+                "reference": "2cb5f366f9e0df014fc93de46cc416ba0a3055f8",
                 "shasum": ""
             },
             "require": {
@@ -159,7 +159,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-03-04 07:12:08"
+            "time": "2016-05-30 08:10:17"
         }
     ],
     "packages-dev": [],

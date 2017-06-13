@@ -13,9 +13,9 @@ files[] = microdata.test
 files[] = modules/email/email.test
 files[] = modules/date/date.test
 
-; Information added by Drupal.org packaging script on 2016-02-06
-version = "7.x-1.0-beta2+42-dev"
+; Information added by Drupal.org packaging script on 2017-04-03
+version = "7.x-1.0-beta2+44-dev"
 core = "7.x"
 project = "microdata"
-datestamp = "1454784548"
+datestamp = "1491181688"
 

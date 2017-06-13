@@ -23,6 +23,7 @@
   <?php print $styles; ?>
   <?php print $scripts; ?>
 </head>
+hello
 <body class="<?php print $classes; ?>">
   <div id="page">
     <div id="header">
