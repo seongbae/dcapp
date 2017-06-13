@@ -43,9 +43,8 @@
 
   #content {
     color: white;
-    
-  </style>
   }
+  </style>
 </head>
 <body class="<?php print $classes; ?>">
   <div id="page">
