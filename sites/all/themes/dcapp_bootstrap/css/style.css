@@ -106,9 +106,6 @@ p {
 	margin-top: 10px;
 }
 
-.node-teaser {
-}
-
 .view-content div.field.field-name-field-business-rating.field-type-fivestar.field-label-hidden{
 	clear: left;
 }
@@ -631,7 +628,7 @@ span.stMainServices.st-twitter-counter,span.stMainServices.st-facebook-counter {
 .node-teaser {
   border-bottom: 1px solid #d3d7d9;
   margin-bottom: 20px;
-  padding-bottom: 10px;
+  padding-bottom: 0px;
 }
 
 /*
@@ -660,7 +657,7 @@ div.simplead-container {
 border-style: solid;
 border-width: 1px;
 border-color: #f1f1f1;
-padding: 10px;
+padding: 0px;
 margin-bottom:20px;
 }
 
