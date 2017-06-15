@@ -759,3 +759,28 @@ body.toolbar-drawer {
 	text-align: center;
 }
 
+.mobile-title {
+	text-align: center;
+	margin-top: 30px;
+	margin-bottom: 50px;
+}
+
+ul.mobile-features {
+	margin-top: 20px;
+	margin-bottom: 50px;
+}
+
+ul.mobile-features li {
+	font-size: 24px;
+	margin-top: 10px;
+}
+
+.appstore {
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.appstore-icon {
+	margin-left: auto;
+	margin-right: auto;
+}
