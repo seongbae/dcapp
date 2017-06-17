@@ -130,6 +130,16 @@ p {
 	color: #FFF;
 }
 
+.navbar-lp {
+	margin-bottom: 0px;
+}
+
+.container-lp {
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+}
+
 
 
 .contextual-links-region
@@ -757,6 +767,19 @@ body.toolbar-drawer {
 .cm-testimonial-title {
 	margin-top: 10px;
 	text-align: center;
+}
+
+
+/* Mobile Landing Page */
+
+.mobile-lp-main-heading {
+	margin: 100px 150px;
+	line-height: 1.5em;
+	text-align: center;
+}
+
+.mobile-lp-main-heading h1 {
+	line-height: 1.5em;
 }
 
 .mobile-title {

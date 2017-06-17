@@ -20,6 +20,7 @@ function dcapp_bootstrap_form_alter(&$form, &$form_state, $form_id) {
   	}
 }
 
+
 function dcapp_bootstrap_field_attach_view_alter(&$output, $context) {
 	if (!empty($output['commerce_price'])) {
 		$output['commerce_price']['#title'] = t('포인트');
@@ -70,6 +71,116 @@ function dcapp_bootstrap_fivestar_static($variables) {
 	}
 	  $output .= '</div></div>';
   return $output;
+}
+
+function dcapp_bootstrap_preprocess_page(&$variables) {
+  // Add information about the number of sidebars.
+  if (!empty($variables['page']['sidebar_first']) && !empty($variables['page']['sidebar_second'])) {
+    $variables['content_column_class'] = ' class="col-sm-6"';
+  }
+  elseif (!empty($variables['page']['sidebar_first']) || !empty($variables['page']['sidebar_second'])) {
+    $variables['content_column_class'] = ' class="col-sm-8"';
+  }
+  else {
+    $variables['content_column_class'] = ' class="col-sm-12"';
+  }
+
+  if (bootstrap_setting('fluid_container') == 1) {
+    $variables['container_class'] = 'container-fluid';
+  }
+  else {
+    $variables['container_class'] = 'container';
+  }
+
+  // Primary nav.
+  $variables['primary_nav'] = FALSE;
+  if ($variables['main_menu']) {
+    // Build links.
+    $variables['primary_nav'] = menu_tree(variable_get('menu_main_links_source', 'main-menu'));
+    // Provide default theme wrapper function.
+    $variables['primary_nav']['#theme_wrappers'] = array('menu_tree__primary');
+  }
+
+  // Secondary nav.
+  $variables['secondary_nav'] = FALSE;
+  if ($variables['secondary_menu']) {
+    // Build links.
+    $variables['secondary_nav'] = menu_tree(variable_get('menu_secondary_links_source', 'user-menu'));
+    // Provide default theme wrapper function.
+    $variables['secondary_nav']['#theme_wrappers'] = array('menu_tree__secondary');
+  }
+
+  $variables['navbar_classes_array'] = array('navbar');
+
+  if (bootstrap_setting('navbar_position') !== '') {
+    $variables['navbar_classes_array'][] = 'navbar-' . bootstrap_setting('navbar_position');
+  }
+  elseif (bootstrap_setting('fluid_container') == 1) {
+    $variables['navbar_classes_array'][] = 'container-fluid';
+  }
+  else {
+    $variables['navbar_classes_array'][] = 'container';
+  }
+  if (bootstrap_setting('navbar_inverse')) {
+    $variables['navbar_classes_array'][] = 'navbar-inverse';
+  }
+  else {
+    $variables['navbar_classes_array'][] = 'navbar-default';
+  }
+
+  if($panel_page = page_manager_get_current_page()) {
+      //print_r("in panels");
+      $panel_page = page_manager_get_current_page();
+      $suggestions[] = 'page__panels';
+      //$suggestions[] = 'page__' . $panel_page['name'];
+      //print_r($suggestions);
+      $variables['theme_hook_suggestions'] = array_merge($variables['theme_hook_suggestions'], $suggestions); //
+  }
+
+  /*if (module_exists('page_manager') && count(page_manager_get_current_page())) {
+      print_r("in panels");
+      $panel_page = page_manager_get_current_page();
+      $suggestions[] = 'page__panels';
+      $suggestions[] = 'page__' . $panel_page['name'];
+      print_r($suggestions);
+      $variables['theme_hook_suggestions'] = array_merge($variables['theme_hook_suggestions'], $suggestions); //
+    }*/
+
+   /*if($panel_page = page_manager_get_current_page()) {
+    // add a generic suggestion for all panel pages
+     $variables['theme_hook_suggestions'][] = 'page__panel';
+    // add the panel page machine name to the template suggestions
+    $variables['theme_hook_suggestions'][] = 'page__' . $panel_page['name'];
+    $object = $panel_page['contexts']['argument_entity_id:node_1'];
+    $result_array = get_object_vars($object);
+    $value = $result_array['restrictions']['type']['0'];
+    //print_r($panel_page['name']. ':' . $value);
+        if($panel_page['name'] == 'page-mobile') {
+              $vars['theme_hook_suggestions'][] = 'page__node_view_mobile';
+          }*/
+    //if($panel_page['name'] == 'node_view' AND $value == 'artist' ) {
+    //          $vars['theme_hook_suggestions'][] = 'page__node_view_artist';
+     //     }
+    
+}
+
+/**
+ * Processes variables for the "page" theme hook.
+ *
+ * See template for list of available variables.
+ *
+ * @see page.tpl.php
+ *
+ * @ingroup theme_process
+ */
+function dcapp_bootstrap_process_page(&$variables) {
+  $variables['navbar_classes'] = implode(' ', $variables['navbar_classes_array']);
+
+
+}
+
+function dcapp_bootstrap_preprocess_panels_pane(&$variables) {
+  //dpm('type: ' . $variables['pane']->type);
 }
 
 /**

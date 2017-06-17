@@ -73,8 +73,7 @@
  * @ingroup templates
  */
 ?>
-not override
-<header id="navbar" role="banner" class="<?php print $navbar_classes; ?>">
+<header role="banner" class="<?php print $navbar_classes; ?> navbar-lp">
   <div class="<?php print $container_class; ?>">
     <div class="navbar-header">
       <?php if ($logo): ?>
@@ -115,7 +114,7 @@ not override
   </div>
 </header>
 
-<div class="main-container <?php print $container_class; ?>">
+<div class="main-container <?php print $container_class; ?> container-lp">
 
   <header role="banner" id="page-header">
     <?php if (!empty($site_slogan)): ?>
@@ -158,7 +157,7 @@ not override
     </section>
 
     <?php if (!empty($page['sidebar_second'])): ?>
-      <aside class="col-sm-4" role="complementary">
+      <aside class="col-sm-3" role="complementary">
         <?php print render($page['sidebar_second']); ?>
       </aside>  <!-- /#sidebar-second -->
     <?php endif; ?>
