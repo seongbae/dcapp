@@ -773,7 +773,7 @@ body.toolbar-drawer {
 /* Mobile Landing Page */
 
 .mobile-lp-main-heading {
-	margin: 100px 150px;
+	margin: 100px 100px;
 	line-height: 1.5em;
 	text-align: center;
 }
@@ -782,13 +782,21 @@ body.toolbar-drawer {
 	line-height: 1.5em;
 }
 
+.mobile-lp-main-heading-hr {
+	border-color: #999;
+	width: 80%;
+	margin-bottom: 80px;
+}
+
 .mobile-title {
 	text-align: center;
 	margin-top: 30px;
 	margin-bottom: 50px;
 }
 
+
 ul.mobile-features {
+	list-style-image: url('../images/checkmark2.png');
 	margin-top: 20px;
 	margin-bottom: 50px;
 }
