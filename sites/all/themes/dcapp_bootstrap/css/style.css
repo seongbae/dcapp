@@ -111,7 +111,11 @@ p {
 }
 
 .navbar-header {
-	padding-top: 2px;
+	padding-top: 0px;
+}
+
+.navbar-static-top {
+	border-width: 0 0 0px;
 }
 
 .navbar-default {
@@ -814,4 +818,8 @@ ul.mobile-features li {
 .appstore-icon {
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.main-container {
+	margin-top: 40px;
 }
