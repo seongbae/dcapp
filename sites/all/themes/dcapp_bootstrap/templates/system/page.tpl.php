@@ -114,7 +114,7 @@
   </div>
 </header>
 
-<div class="main-container <?php print $container_class; ?>">
+<div class="main-container <?php print $container_class; ?> main-container-add-margin">
 
   <header role="banner" id="page-header">
     <?php if (!empty($site_slogan)): ?>
