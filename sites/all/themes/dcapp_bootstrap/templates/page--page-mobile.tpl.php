@@ -73,7 +73,6 @@
  * @ingroup templates
  */
 ?>
-hello world
 <header id="navbar-lp" role="banner" class="<?php print $navbar_classes; ?>">
   <div class="<?php print $container_class; ?>">
     <div class="navbar-header">
