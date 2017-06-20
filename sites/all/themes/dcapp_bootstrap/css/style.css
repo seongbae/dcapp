@@ -786,11 +786,16 @@ body.toolbar-drawer {
 	line-height: 1.5em;
 }
 
-.mobile-lp-main-heading-hr {
-	border-color: #999;
-	width: 80%;
-	margin-bottom: 80px;
+/* Landscape phones and portrait tablets */
+@media (min-width: 768px) {
+	.mobile-lp-main-heading-hr {
+		border-color: #999;
+		width: 80%;
+		margin-bottom: 80px;
+	}
 }
+
+
 
 .mobile-title {
 	text-align: center;

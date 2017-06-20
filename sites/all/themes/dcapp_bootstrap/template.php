@@ -4,6 +4,35 @@
  * @file
  * template.php
  */
+
+function dcapp_bootstrap_preprocess_html(&$vars) {
+        $apple_app_banner = array (
+                '#tag' => 'meta',
+                '#attributes' => array (
+                        'name' => 'apple-itunes-app',
+                        'content' => 'app-id=698007248',
+                ),
+        );
+
+        $android_app_banner = array (
+                '#tag' => 'link',
+                '#attributes' => array (
+                        'rel' => 'manifest',
+                        'href' => '/manifest.json',
+                ),
+
+        );
+
+        //$current_path = \Drupal::service('path.current')->getPath();
+        //print_r(strpos(drupal_get_path_alias(), 'biz'));
+        if (strpos(drupal_get_path_alias(), 'biz') === 0) {
+                //print_r("hello");
+                drupal_add_html_head($apple_app_banner, 'apple_app_banner');
+                drupal_add_html_head($android_app_banner, 'android_app_banner');
+        }
+}
+
+
 function dcapp_bootstrap_preprocess_node(&$vars, $hook) {
 
   $account = user_load($variables['uid']);
