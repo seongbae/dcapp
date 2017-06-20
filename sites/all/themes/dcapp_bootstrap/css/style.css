@@ -777,22 +777,36 @@ body.toolbar-drawer {
 /* Mobile Landing Page */
 
 .mobile-lp-main-heading {
-	margin: 100px 100px;
+	
 	line-height: 1.5em;
 	text-align: center;
+}
+
+@media (min-width: 768px) {
+	.mobile-lp-main-heading {
+		margin: 100px 100px;
+	}
+
+}
+
+@media (max-width: 767px) {
+	.mobile-lp-main-heading {
+		margin: 100px 20px;
+	}
+
+	.mobile-col-right {
+		margin: 0px 20px;
+	}
 }
 
 .mobile-lp-main-heading h1 {
 	line-height: 1.5em;
 }
 
-/* Landscape phones and portrait tablets */
-@media (min-width: 768px) {
-	.mobile-lp-main-heading-hr {
-		border-color: #999;
-		width: 80%;
-		margin-bottom: 80px;
-	}
+.mobile-lp-main-heading-hr {
+	border-color: #999;
+	width: 80%;
+	margin-bottom: 80px;
 }
 
 
