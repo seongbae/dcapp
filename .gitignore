@@ -7,3 +7,4 @@ sites/*/private
 
 *.txt
 themes/*
+install.php
