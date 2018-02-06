@@ -134,6 +134,11 @@ p {
 	color: #FFF;
 }
 
+.navbar-default .navbar-nav>li>a:hover {
+	color: #FFF;
+	font-weight: bold;
+}
+
 .navbar-lp {
 	margin-bottom: 0px;
 }
