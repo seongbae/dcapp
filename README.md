@@ -17,9 +17,9 @@ A taxonomy is composed of a vocabulary and associated terms.
 dcapp_taxonomy accepts following parameter(s):
 * vid - Vocabulary ID (optional)
 
-XML Example: http://example.com/api/v1/dcapp_taxonomy?vid=12
+XML Example: https://www.dcapp.org/api/v1/dcapp_taxonomy?vid=12
 
-JSON Example: http://example.com/api/v1/dcapp_taxonomy.json?vid=12
+JSON Example: https://www.dcapp.org/api/v1/dcapp_taxonomy.json?vid=12
 
 Response Body:
 ```
@@ -64,9 +64,9 @@ dcapp_business accepts following parameters:
 * lat - source latitude (optional)
 * lon - destination longitude (optional)
 
-XML Example: http://example.com/api/v1/dcapp_business?tid=212&limit=20&offset=0&lat=38.885057&lon=-77.39772
+XML Example: https://www.dcapp.org/api/v1/dcapp_business?tid=212&limit=20&offset=0&lat=38.885057&lon=-77.39772
 
-JSON Example: http://example.com/api/v1/dcapp_business.json?tid=212&limit=20&offset=0&lat=38.885057&lon=-77.39772
+JSON Example: https://www.dcapp.org/api/v1/dcapp_business.json?tid=212&limit=20&offset=0&lat=38.885057&lon=-77.39772
 
 Response Body:
 ```
@@ -111,9 +111,9 @@ Response Body:
 dcapp_business/retrieve accepts following parameter(s):
 * nid - Node ID (required)
 
-XML Example: http://example.com/api/v1/dcapp_business/retrieve?nid=2012
+XML Example: https://www.dcapp.org/api/v1/dcapp_business/retrieve?nid=2012
 
-JSON Example: http://example.com/api/v1/dcapp_business/retrieve.json?nid=2012
+JSON Example: https://www.dcapp.org/api/v1/dcapp_business/retrieve.json?nid=2012
 
 Response Body:
 ```
@@ -157,9 +157,9 @@ Returns comments associated with a node in Drupal.
 dcapp_comment accepts following parameter(s)
 * nid - Node ID (required)
 
-XML Example: http://example.com/api/v1/dcapp_comment?nid=2012
+XML Example: https://www.dcapp.org/api/v1/dcapp_comment?nid=2012
 
-JSON Example: http://example.com/api/v1/dcapp_comment.json?vid=2012
+JSON Example: https://www.dcapp.org/api/v1/dcapp_comment.json?vid=2012
 
 Response Body:
 ```
