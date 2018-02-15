@@ -147,6 +147,14 @@ function dcapp_services_resources() {
               'optional' => TRUE,
               'default' => '0',
             ),
+            array(
+              'name' => 'lang',
+              'type' => 'string',
+              'description' => 'Language',
+              'source' => array('param' => 'lang'),
+              'optional' => TRUE,
+              'default' => 'kr',
+            ),
             
           ),
         ),
@@ -172,6 +180,14 @@ function dcapp_services_resources() {
               'source' => array('param' => 'nid'),
               'optional' => FALSE,
               'default' => '0',
+            ),
+            array(
+              'name' => 'lang',
+              'type' => 'string',
+              'description' => 'Language',
+              'source' => array('param' => 'lang'),
+              'optional' => TRUE,
+              'default' => 'kr',
             ),
           ),
         ),
@@ -202,6 +218,14 @@ function dcapp_services_resources() {
               'optional' => TRUE,
               'default' => '0',
             ),
+            array(
+              'name' => 'lang',
+              'type' => 'string',
+              'description' => 'Language',
+              'source' => array('param' => 'lang'),
+              'optional' => TRUE,
+              'default' => 'kr',
+            ),
           ),
         ),
       ),
@@ -231,6 +255,14 @@ function dcapp_services_resources() {
               'optional' => TRUE,
               'default' => '0',
             ),
+            array(
+              'name' => 'lang',
+              'type' => 'string',
+              'description' => 'Language',
+              'source' => array('param' => 'lang'),
+              'optional' => TRUE,
+              'default' => 'kr',
+            ),
           ),
         ),
       ),
@@ -240,7 +272,7 @@ function dcapp_services_resources() {
   return $api;
 }
 
-function _dcapp_business_index($fn, $listtype, $limit, $timestamp, $tid, $offset, $lon, $lat) {
+function _dcapp_business_index($fn, $listtype, $limit, $timestamp, $tid, $offset, $lon, $lat, $lang) {
   // Check for mad values
   $nitems = intval($nitems);
   $timestamp = intval($timestamp);
@@ -248,10 +280,10 @@ function _dcapp_business_index($fn, $listtype, $limit, $timestamp, $tid, $offset
   $lon = doubleval($lon);
   $lat = doubleval($lat);
 
-  return dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset, $lon, $lat);
+  return dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset, $lon, $lat, $lang);
 }
 
-function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset, $lon, $lat) {
+function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset, $lon, $lat, $lang) {
   // Compose query
   $query = db_select('node', 'n');
   //$query->join('node_revision', 'v', '(n.nid = v.nid) AND (n.vid = v.vid)');
@@ -263,10 +295,16 @@ function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset,
   $query->leftJoin('comment','d','d.nid = n.nid');
   $query->leftJoin('field_data_field_business_rating','r','d.cid = r.entity_id');
   $query->leftJoin('field_data_field_open_positions','op','n.nid = op.entity_id');
+  $query->leftJoin('field_data_field_business_en_name','en','n.nid = en.entity_id');
 
   $query->addField('n', 'created', 'created');
   $query->addField('n', 'changed', 'changed');
-  $query->addField('n', 'title', 'name');
+  
+  if ($lang == 'en')
+    $query->addExpression('IFNULL(en.field_business_en_name_value, n.title)', 'name');
+  else
+    $query->addField('n', 'title', 'name');
+
   $query->addField('n', 'nid', 'nid');
   $query->addField('n', 'sticky', 'sticky');
   $query->addField('u', 'name', 'author');
@@ -336,7 +374,7 @@ function dcapp_find_business_items($listtype, $limit, $timestamp, $tid, $offset,
   return round($distance, $decimals);
 }
 
-function _dcapp_business_retrieve($fn, $nid) {
+function _dcapp_business_retrieve($fn, $nid, $lang) {
   // Check for mad values
 
   $query = db_select('node', 'n');
@@ -356,8 +394,14 @@ function _dcapp_business_retrieve($fn, $nid) {
  
   $query->addField('n', 'created', 'created');
   $query->addField('n', 'changed', 'changed');
-  $query->addField('v', 'title', 'name');
-  $query->addField('en', 'field_business_en_name_value', 'name_en');
+  //$query->addField('v', 'title', 'name');
+  
+  if ($lang == 'en')
+    $query->addExpression('IFNULL(en.field_business_en_name_value, v.title)', 'name');
+  else
+    $query->addField('v', 'title', 'name');
+
+  //$query->addField('en', 'field_business_en_name_value', 'name_en');
   $query->addField('n', 'nid', 'nid');
   $query->addField('n', 'sticky', 'sticky');
   $query->addField('u', 'name', 'author');
@@ -398,21 +442,27 @@ function _dcapp_business_retrieve($fn, $nid) {
   return $items;
 }
 
-function _dcapp_taxonomy_index($fn, $vid) {
+function _dcapp_taxonomy_index($fn, $vid, $lang) {
   // Check for mad values
   $tid = intval($vid);
 
-  return dcapp_find_taxonomy($vid);
+  return dcapp_find_taxonomy($vid, $lang);
 }
 
-function dcapp_find_taxonomy($vid) {
+function dcapp_find_taxonomy($vid, $lang) {
   // Compose query
   $query = db_select('taxonomy_vocabulary', 'v');
   
   $query->addField('v', 'vid', 'vid');
   $query->addField('v', 'name', 'vname');
+  $query->addField('v', 'name', 'vname');
   $query->addField('t', 'tid', 'tid');
-  $query->addField('t', 'name', 'name');
+
+  if ($lang == 'en')
+    $query->addExpression('IFNULL(en.field_english_name_value, t.name)', 'name');
+  else
+    $query->addField('t', 'name', 'name');
+
   $query->addField('t', 'description', 'description');
   $query->addField('t', 'weight', 'weight');
   $query->addField('h', 'parent', 'parent_tid');
@@ -425,6 +475,7 @@ function dcapp_find_taxonomy($vid) {
   $query->leftJoin('field_data_field_business_term_image','i1','i1.entity_id=t.tid');
   $query->leftJoin('field_data_field_business_term_image2x','i2','i2.entity_id=t.tid');
   $query->leftJoin('field_data_field_business_term_image3x','i3','i3.entity_id=t.tid');
+  $query->leftJoin('field_data_field_english_name','en','en.entity_id=t.tid');
   $query->leftJoin('file_managed','f1','f1.fid=i1.field_business_term_image_fid');
   $query->leftJoin('file_managed','f2','f2.fid=i2.field_business_term_image2x_fid');
   $query->leftJoin('file_managed','f3','f3.fid=i3.field_business_term_image3x_fid');
@@ -441,14 +492,14 @@ function dcapp_find_taxonomy($vid) {
   return $items;
 }
 
-function _dcapp_comment_index($fn, $nid) {
+function _dcapp_comment_index($fn, $nid, $lang) {
   // Check for mad values
   $nid = intval($nid);
 
-  return dcapp_find_comments($nid);
+  return dcapp_find_comments($nid, $lang);
 }
 
-function dcapp_find_comments($nid) {
+function dcapp_find_comments($nid, $lang) {
   // Compose query
   $query = db_select('comment', 'c');
   
@@ -457,7 +508,13 @@ function dcapp_find_comments($nid) {
   $query->addField('c', 'uid', 'uid');
   $query->addField('c', 'name', 'name');
   $query->addField('c', 'subject', 'subject');
-  $query->addField('b', 'comment_body_value', 'body');
+  //$query->addField('b', 'comment_body_value', 'body');
+
+  if ($lang == 'en')
+    $query->addExpression('IFNULL(en.field_comment_en_value, b.comment_body_value)', 'body');
+  else
+    $query->addField('b', 'comment_body_value', 'body');
+
   $query->addField('b', 'comment_body_format', 'body_format');
   $query->addField('c', 'created', 'created');
   $query->addField('c', 'changed', 'changed');
@@ -465,6 +522,7 @@ function dcapp_find_comments($nid) {
   
   $query->join('field_data_comment_body','b','b.entity_id=c.cid');
   $query->leftJoin('field_data_field_business_rating','r','r.entity_id=c.cid');
+  $query->leftJoin('field_data_field_comment_en','en','en.entity_id=c.cid');
 
   // filter by node id
   if ($nid > 0) {
