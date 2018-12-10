@@ -1,4 +1,46 @@
-User Registration Password 7.x-1.4-rc1 2013-05-06
+User Registration Password 7.x-1.5 2017-11-08
+---------------------------------------------
+
+- Bug: Used or invalid one-time link
+  https://www.drupal.org/node/2344171
+
+- Bug: Fatal error: Call to undefined function commerce_cart_order_id() in
+  user_registrationpassword.pages.inc on line 78
+  https://www.drupal.org/node/2498003
+
+- Bug: Undefined variable: text in _user_mail_text()
+  https://www.drupal.org/node/2500879
+
+- Task: Remove tokes when unable to generate value
+  https://www.drupal.org/node/2857760
+
+- New: Mail Debugger Integration (Patch Included) (and followup)
+  https://www.drupal.org/node/2849288
+  https://www.drupal.org/node/2859910
+
+- New: Any way to hook into user_registrationpassword_confirm_account?
+  https://www.drupal.org/node/2058431
+
+- Bug: Mail not sent for pending approval
+  https://www.drupal.org/node/2152925
+
+- Bug: Missing translation for admin overriden mails
+  https://www.drupal.org/node/2554717
+
+- Task: Fix codingstandards
+  https://www.drupal.org/node/2916052
+
+- Task: Add access check to rules event
+  https://www.drupal.org/node/2914234
+
+- Task: Move variable hooks into separate file
+  https://www.drupal.org/node/2916134
+
+- Bug: Variable translation saved (during install)
+  https://www.drupal.org/node/2917971
+
+
+User Registration Password 7.x-1.4 2015-05-08
 ---------------------------------------------
 
 - New: Added support for the rpt module.

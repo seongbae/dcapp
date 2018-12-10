@@ -97,17 +97,19 @@ function addressfield_tokens_token_info_alter(&$info) {
   }
 
   // Add extra text to webform submission values help.
-  $info['tokens']['submission']['values']['description'] .= '
-    <div>
-    ' . t('For addressfield components you can also choose individual elements of the address using the syntax field_key:element, For example:') . '
-    <ul>
-      <li>[submission:values:address:thoroughfare]</li>
-      <li>[submission:values:address:locality]</li>
-      <li>[submission:values:address:administrative_area]</li>
-      <li>[submission:values:address:postal_code]</li>
-      <li>[submission:values:address:country]</li>
-    </ul>
-  </div>';
+  if (array_key_exists('submission', $info['tokens'])) {
+    $info['tokens']['submission']['values']['description'] .= '
+      <div>
+      ' . t('For addressfield components you can also choose individual elements of the address using the syntax field_key:element, For example:') . '
+      <ul>
+        <li>[submission:values:address:thoroughfare]</li>
+        <li>[submission:values:address:locality]</li>
+        <li>[submission:values:address:administrative_area]</li>
+        <li>[submission:values:address:postal_code]</li>
+        <li>[submission:values:address:country]</li>
+      </ul>
+    </div>';
+  }
 
   // Attach tokens to all address fields.
   $valid_types = entity_token_types();
@@ -153,8 +155,11 @@ function addressfield_tokens_tokens($type, $tokens, array $data = array(), array
     // Loop through the components of the webform looking for addressfield
     // components with the expected form_key.
     foreach ($node->webform['components'] as $cid => $component) {
-      if ($component['type'] == 'addressfield' && isset($submission->data[$cid][0]['addressfield'])) {
-        $address = $submission->data[$cid][0]['addressfield'];
+      if ($component['type'] == 'addressfield' && isset($submission->data[$cid][0])) {
+        $address = $submission->data[$cid][0];
+        if (is_string($address)) {
+          $address = unserialize($address);
+        }
         $address_tokens = token_find_with_prefix($value_tokens, $component['form_key']);
         foreach ($address_tokens as $token => $original) {
           if (isset($address[$token])) {
@@ -224,10 +229,10 @@ function addressfield_tokens_tokens($type, $tokens, array $data = array(), array
           case 'state_name':
             if (!empty($address['administrative_area']) && !empty($address['country'])) {
               if ($sanitize) {
-                $replacements[$original] = filter_xss(_addressfield_tokens_state($address['country'], $address['administrative_area']));
+                $replacements[$original] = filter_xss(addressfield_tokens_state($address['country'], $address['administrative_area']));
               }
               else {
-                $replacements[$original] = _addressfield_tokens_state($address['country'], $address['administrative_area']);
+                $replacements[$original] = addressfield_tokens_state($address['country'], $address['administrative_area']);
               }
             }
             break;

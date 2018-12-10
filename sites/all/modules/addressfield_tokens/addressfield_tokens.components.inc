@@ -123,19 +123,14 @@ function _webform_render_addressfield($component, $value = NULL, $filter = TRUE)
   $available = !empty($component['extra']['available_countries']) ? $component['extra']['available_countries'] : NULL;
 
   // Get the current address.
-  if (!empty($value[0])) {
-    if (is_string($value[0])) {
-      $address = unserialize($value[0]);
+  $address = _addressfield_tokens_expand_value($value);
+  if (empty($address)) {
+    if (!empty($component['value'])) {
+      $address = $component['value'];
     }
     else {
-      $address = $value[0];
+      $address = _webform_addressfield($component['cid']);
     }
-  }
-  elseif (!empty($component['value'])) {
-    $address = $component['value'];
-  }
-  else {
-    $address = _webform_addressfield($component['cid']);
   }
   if (empty($address)) {
     $address = _webform_addressfield_default_values($available, $component);
@@ -144,10 +139,18 @@ function _webform_render_addressfield($component, $value = NULL, $filter = TRUE)
   // Generate the address form.
   $context = array(
     'mode' => 'form',
+    'instance' => array(
+      'required' => $component['required'],
+    ),
     'form_key' => $component['form_key'],
   );
   $handlers = !empty($component['extra']['format_handlers']) ? $component['extra']['format_handlers'] : array('address');
   $element += addressfield_generate($address, $handlers, $context);
+
+  if (empty($address['country'])) {
+    $element['street_block']['#access'] = FALSE;
+    $element['locality_block']['#access'] = FALSE;
+  }
 
   if (isset($element['country'])) {
     if (!empty($available)) {
@@ -160,6 +163,7 @@ function _webform_render_addressfield($component, $value = NULL, $filter = TRUE)
         $element['country']['#access'] =  FALSE;
       }
     }
+    $element['country']['#default_value'] = $address['country'];
     $element['country']['#element_validate'] = array('_webform_addressfield_country_validate');
     $element['country']['#cid'] = $component['cid'];
     $element['country']['#limit_validation_errors'] = array();
@@ -266,13 +270,7 @@ function _webform_addressfield_country_validate(&$element, &$form_state) {
  *   (such as wrapping the text) or as HTML (ensuring consistent output).
  */
 function _webform_display_addressfield($component, $value, $format = 'html') {
-  $address = NULL;
-  if (isset($value[0])) {
-    $address = $value[0];
-    if (is_string($address)) {
-      $address = unserialize($address);
-    }
-  }
+  $address = _addressfield_tokens_expand_value($value);
   return array(
     '#title'          => $component['name'],
     '#weight'         => $component['weight'],
@@ -281,7 +279,7 @@ function _webform_display_addressfield($component, $value, $format = 'html') {
     '#post_render'    => array('webform_element_wrapper'),
     '#component'      => $component,
     '#format'         => $format,
-    '#address'        => $address,
+    '#address'        => $address ? $address : NULL,
     '#handlers'       => $component['extra']['format_handlers'],
   );
 }
@@ -360,7 +358,7 @@ function _webform_analysis_addressfield($component, $sids = array(), $single = F
     t('User entered value'),
     $non_blanks,
   );
-  return $rows;
+  return array('table_rows' => $rows);
 }
 
 /**
@@ -379,8 +377,9 @@ function _webform_analysis_addressfield($component, $sids = array(), $single = F
  *   Textual output formatted for human reading.
  */
 function _webform_table_addressfield($component, $value) {
-  if (!empty($value[0])) {
-    return theme('addressfield_formatter', array('address' => $value[0]));
+  $address = _addressfield_tokens_expand_value($value);
+  if ($address) {
+    return theme('addressfield_formatter', array('address' => $address));
   }
   return '';
 }
@@ -406,7 +405,6 @@ function _webform_csv_headers_addressfield($component, $export_options) {
     $header[0] = array();
     $header[1] = array();
     $header[2] = array();
-
     foreach (addressfield_tokens_property_names() as $key => $name) {
       $header[0][] = '';
       $header[1][] = (empty($header[1])) ? $component['name'] : '';
@@ -415,7 +413,7 @@ function _webform_csv_headers_addressfield($component, $export_options) {
   }
   else {
     $header[0] = array('');
-    $header[1] = array();
+    $header[1] = array('');
     $header[2] = array($component['name']);
   }
   return $header;
@@ -441,17 +439,38 @@ function _webform_csv_headers_addressfield($component, $export_options) {
  *   every row of data.
  */
 function _webform_csv_data_addressfield($component, $export_options, $value) {
+  $address = _addressfield_tokens_expand_value($value);
   if (!empty($component['extra']['csv_separate']) && $component['extra']['csv_separate'] == 1) {
+    // Each address component should be in a separate column.
     $return = array();
     foreach (addressfield_tokens_property_names() as $key => $name) {
-      $return[] = (isset($value[0][$key])) ? $value[0][$key] : '';
+      $return[] = (isset($address[$key])) ? $address[$key] : '';
     }
     return $return;
   }
   else {
-    if (!empty($value[0])) {
-      return theme('addressfield_formatter__linear', array('address' => $value[0]));
+    // The entire address should be displayed in the one column.
+    if ($address) {
+      return theme('addressfield_formatter__linear', array('address' => $address));
     }
     return '';
   }
 }
+
+/**
+ * Expand a raw address submission as loaded from the database to an array.
+ *
+ * @param string $value
+ *   An array of information containing the submission result, directly
+ *   correlating to the {webform_submitted_data} database schema.
+ *
+ * @return array|false
+ *   An associative array of address fields, or FALSE on failure.
+ */
+function _addressfield_tokens_expand_value($value) {
+  if (isset($value[0]) && is_string($value[0])) {
+    return unserialize($value[0]);
+  }
+  return FALSE;
+}
+

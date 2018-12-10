@@ -44,14 +44,14 @@ function user_registrationpassword_confirm_account($form, &$form_state, $uid, $t
 
     // Timestamp can not be larger then current.
     if ($timestamp_created <= $current && $account = reset($users)) {
-      // Check if we have to enforce experation for activation links.
+      // Check if we have to enforce expiration for activation links.
       if (variable_get('user_registrationpassword_registration_ftll_expire', FALSE) && !$account->login && $current - $timestamp > $timeout) {
         user_registrationpassword_set_message('linkerror', TRUE);
       }
       // Else try to activate the account.
-      // Password = user's password - timestamp = current request - login = username.
-      // user_pass_rehash($password, $timestamp, $login, $uid)
-      elseif ($account->uid && $timestamp >= $account->created && !$account->login && $hashed_pass == user_pass_rehash($account->pass, $timestamp, $account->name, $account->uid)) {
+      // Password = user's password - timestamp = current request - login =
+      // username.
+      elseif ($account->uid && $timestamp >= $account->created && !$account->login && $hashed_pass == user_pass_rehash($account->pass, $timestamp, $account->login, $account->uid)) {
         // Format the date, so the logs are a bit more readable.
         $date = format_date($timestamp);
         watchdog('user', 'User %name used one-time login link at time %timestamp.', array('%name' => $account->name, '%timestamp' => $date));
@@ -59,13 +59,17 @@ function user_registrationpassword_confirm_account($form, &$form_state, $uid, $t
         $account = user_save($account, array(
           'status' => 1,
           'access' => $current,
-          'login' => $current)
-        );
+          'login' => $current,
+        ));
         // Set the new user.
         $user = $account;
         // user_login_finalize() also updates the login timestamp of the
         // user, which invalidates further use of the one-time login link.
         user_login_finalize();
+
+        // Invoke user_registrationpassword_user_activated so other modules can
+        // respond to the user activation.
+        module_invoke_all('user_registrationpassword_activated_user', $account);
 
         // Trigger a rules event.
         // @see http://drupal.org/node/1776286
@@ -74,7 +78,7 @@ function user_registrationpassword_confirm_account($form, &$form_state, $uid, $t
         }
 
         // Test for Commerce checkout and redirect to checkout if exists.
-        if (module_exists('commerce_checkout')) {
+        if (module_exists('commerce_checkout_redirect') && module_exists('commerce_cart')) {
           $order_id = commerce_cart_order_id();
           // People need to be coming from the checkout form, and thus
           // have an order ready, so we will forward them to the checkout

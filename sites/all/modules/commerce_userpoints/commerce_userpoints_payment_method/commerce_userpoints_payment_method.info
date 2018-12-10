@@ -8,9 +8,8 @@ dependencies[] = commerce_payment
 dependencies[] = commerce_userpoints
 
 
-; Information added by Drupal.org packaging script on 2013-12-23
-version = "7.x-1.x-dev"
+; Information added by Drupal.org packaging script on 2018-04-04
+version = "7.x-1.0"
 core = "7.x"
 project = "commerce_userpoints"
-datestamp = "1387814909"
-
+datestamp = "1522860495"

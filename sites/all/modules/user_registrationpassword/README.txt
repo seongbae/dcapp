@@ -8,8 +8,6 @@ CONTENTS OF THIS FILE
  * E-mail templates
  * Multilangual sites
  * Known issues
- * Password reset support
- * Resend confirmation mail
  * De-installation
  * Upgrade notes
 
@@ -33,11 +31,14 @@ User Registration Password transforms the checkbox on the
 admin/config/people/accounts page into a radio list with 3 options.
 
 The first 2 are default Drupal behaviour:
-0 Do not require a verification e-mail, and let users set their password on the registration form.
-0 Require a verification e-mail, but wait for the approval e-mail to let users set their password.
+0 Do not require a verification e-mail, and let users set their password on the
+  registration form.
+0 Require a verification e-mail, but wait for the approval e-mail to let users
+  set their password.
 
 The newly added option is:
-X Require a verification e-mail, but let users set their password directly on the registration form.
+X Require a verification e-mail, but let users set their password directly on
+  the registration form.
 
 The first 2 disable User Registration Password, only the 3rd option activates
 the behaviour offered by this module.
@@ -65,12 +66,16 @@ Who can register accounts?
 X Visitors
 0 Visitors, but administrator approval is required
 
-Then select 'Require a verification e-mail, but let users set their password directly on the registration form.' at:
+Then select 'Require a verification e-mail, but let users set their password
+directly on the registration form.' at:
 
 Require e-mail verification when a visitor creates an account
-0 Do not require a verification e-mail, and let users set their password on the registration form.
-0 Require a verification e-mail, but wait for the approval e-mail to let users set their password.
-X Require a verification e-mail, but let users set their password directly on the registration form.
+0 Do not require a verification e-mail, and let users set their password on the
+  registration form.
+0 Require a verification e-mail, but wait for the approval e-mail to let users
+  set their password.
+X Require a verification e-mail, but let users set their password directly on
+  the registration form.
 
 The module is now configured and ready for use. This is also the only way to
 configure it correctly. This module will also not work if you do not have
@@ -128,26 +133,6 @@ description of the problem here:
 http://drupal.org/node/add/project-issue/user_registrationpassword
 
 
-PASSWORD RESET SUPPORT
-----------------------
-
-Password reset support includes 2 goals:
-- Provide a privacy-save form.
-- Limit floods.
-
-This is currently not fixed in core, so we implemented it as a temporary fix.
-
-The flood_control module can be used to tweak settings.
-
-
-RESEND CONFIRMATION MAIL
-------------------------
-
-We have implemented a new action via hook_user_operations()
-called: 'resend confirmation mail'. This enabled administrators
-to re-send confirmation e-mails to users from the admin users page.
-
-
 DE-INSTALLATION
 ---------------
 
@@ -155,9 +140,12 @@ If you want to disable the module temporally, just select the first or second
 option on the the admin/config/people/accounts page at:
 
 Require e-mail verification when a visitor creates an account
-1 Do not require a verification e-mail, and let users set their password on the registration form.
-2 Require a verification e-mail, but wait for the approval e-mail to let users set their password.
-3 Require a verification e-mail, but let users set their password directly on the registration form.
+1 Do not require a verification e-mail, and let users set their password on the
+  registration form.
+2 Require a verification e-mail, but wait for the approval e-mail to let users
+  set their password.
+3 Require a verification e-mail, but let users set their password directly on
+  the registration form.
 
 This disables the User Registration Password functionality without
 disabling / uninstalling it.
@@ -168,6 +156,15 @@ for any other module via the admin/modules page.
 
 UPGRADE NOTES
 -------------
+
+1.4 - 1.5
+
+Due to some code changes the registry is cleared in an update hook. It might
+also be required to clear the caches on your site, please test to make sure.
+
+The Drupal coding standards issues have been fixed, all code now validates. This
+includes renaming of all named constants, so we advice a review of your code if
+you use these in any place in your custom code.
 
 1.3 - 1.4
 
@@ -185,7 +182,8 @@ activation' e-mail template. When you update from 1.0/1.1/1.2 to 1.3, this
 template is not activated when you run the updater. You have to change this
 manually, just like before version 1.3, so most of you already know this.
 From versions 6.x-1.0 and 7.x-1.3 and up, the installer overrides the default
-'Account activation' e-mail template, so we only list it here as extra information.
+'Account activation' e-mail template, so we only list it here as extra
+information.
 
 Modified 'Account activation' e-mail template for User Registration password:
 --------------------------------------------------------------------------------
