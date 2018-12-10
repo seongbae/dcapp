@@ -222,6 +222,12 @@ div.region.region-content>div.field.field-name-body {
         float: left;
 }
 
+/* Job views */
+
+.view-jobs .views-exposed-widgets, .view-rental .views-exposed-widgets {
+	margin-bottom: 4em;
+
+}
 
 
 div.content div.field.field-name-field-business-logo {
